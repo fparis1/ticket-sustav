@@ -6,6 +6,7 @@ import {useStateContext} from "../context/ContextProvider.jsx";
 export default function UserForm() {
   const navigate = useNavigate();
   let {id} = useParams();
+  debugger;
   const [user, setUser] = useState({
     id: null,
     name: '',
