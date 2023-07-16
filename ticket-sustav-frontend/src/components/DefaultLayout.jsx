@@ -30,8 +30,15 @@ export default function DefaultLayout() {
   return (
     <div id="defaultLayout">
       <aside>
-        <Link to="/dashboard">Dashboard</Link>
-        <Link to="/users">Users</Link>
+        {user.role === "admin" && (
+          <>
+            <Link to="/dashboard">Dashboard</Link>
+            <Link to="/users">Users</Link>
+            <Link to="/tickets">Tickets</Link>
+            <Link to="/technicians">Technicians</Link>
+            <Link to="/Clients">Clients</Link>
+          </>
+        )}
       </aside>
       <div className="content">
         <header>
@@ -40,7 +47,7 @@ export default function DefaultLayout() {
           </div>
 
           <div>
-            {user.name} &nbsp; &nbsp;
+            Hello <b>{user.name}</b> &nbsp; &nbsp;
             <a onClick={onLogout} className="btn-logout" href="#">Logout</a>
           </div>
         </header>

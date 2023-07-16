@@ -6,6 +6,7 @@ import Login from "./views/Login";
 import NotFound from "./views/NotFound";
 import Signup from "./views/Signup";
 import Users from "./views/Users";
+import Tickets from "./views/Tickets.jsx";
 import UserForm from "./views/UserForm";
 
 const router = createBrowserRouter([
@@ -28,6 +29,18 @@ const router = createBrowserRouter([
       {
         path: '/users/new',
         element: <UserForm key="userCreate" />
+      },
+      {
+        path: '/users/:id',
+        element: <UserForm key="userUpdate" />
+      },
+      {
+        path: '/tickets',
+        element: <Tickets/>
+      },
+      {
+        path: '/users/:id',
+        element: <UserForm key="userUpdate" />
       },
       {
         path: '/users/:id',
