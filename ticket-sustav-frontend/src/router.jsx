@@ -8,6 +8,10 @@ import Signup from "./views/Signup";
 import Users from "./views/Users";
 import Tickets from "./views/Tickets.jsx";
 import UserForm from "./views/UserForm";
+import TicketForm from "./views/TicketForm.jsx";
+import ClientForm from "./views/ClientForm.jsx";
+import Clients from "./views/Clients.jsx";
+import Technicians from "./views/Technicians.jsx";
 
 const router = createBrowserRouter([
   {
@@ -16,7 +20,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: '/',
-        element: <Navigate to="/users"/>
+        element: <Navigate to="/dashboard"/>
       },
       {
         path: '/dashboard',
@@ -39,12 +43,28 @@ const router = createBrowserRouter([
         element: <Tickets/>
       },
       {
-        path: '/users/:id',
-        element: <UserForm key="userUpdate" />
+        path: '/tickets/new',
+        element: <TicketForm key="ticketCreate" />
       },
       {
-        path: '/users/:id',
-        element: <UserForm key="userUpdate" />
+        path: '/tickets/:id',
+        element: <TicketForm key="ticketUpdate" />
+      },
+      {
+        path: '/clients',
+        element: <Clients/>
+      },
+      {
+        path: '/clients/new',
+        element: <ClientForm key="clientCreate" />
+      },
+      {
+        path: '/clients/:id',
+        element: <ClientForm key="clientUpdate" />
+      },
+      {
+        path: '/technicians',
+        element: <Technicians/>
       }
     ]
   },

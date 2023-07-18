@@ -5,7 +5,6 @@ import {useEffect} from "react";
 
 export default function DefaultLayout() {
   const {user, token, setUser, setToken, notification} = useStateContext();
-
   if (!token) {
     return <Navigate to="/login"/>
   }
@@ -36,7 +35,7 @@ export default function DefaultLayout() {
             <Link to="/users">Users</Link>
             <Link to="/tickets">Tickets</Link>
             <Link to="/technicians">Technicians</Link>
-            <Link to="/Clients">Clients</Link>
+            <Link to="/clients">Clients</Link>
           </>
         )}
       </aside>

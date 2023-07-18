@@ -3,15 +3,14 @@ import {useEffect, useState} from "react";
 import axiosClient from "../axios-client.js";
 import {useStateContext} from "../context/ContextProvider.jsx";
 
-export default function UserForm() {
+export default function TicketForm() {
   const navigate = useNavigate();
   let {id} = useParams();
-  const [user, setUser] = useState({
+  const [ticket, setTicket] = useState({
     id: null,
     name: '',
-    email: '',
-    password: '',
-    password_confirmation: ''
+    description: '',
+    status: ''
   })
   const [errors, setErrors] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -20,10 +19,10 @@ export default function UserForm() {
   if (id) {
     useEffect(() => {
       setLoading(true)
-      axiosClient.get(`/users/${id}`)
+      axiosClient.get(`/tickets/${id}`)
         .then(({data}) => {
           setLoading(false)
-          setUser(data)
+          setTicket(data)
         })
         .catch(() => {
           setLoading(false)
@@ -33,11 +32,11 @@ export default function UserForm() {
 
   const onSubmit = ev => {
     ev.preventDefault()
-    if (user.id) {
-      axiosClient.put(`/users/${user.id}`, user)
+    if (ticket.id) {
+      axiosClient.put(`/tickets/${ticket.id}`, ticket)
         .then(() => {
-          setNotification('User was successfully updated')
-          navigate('/users')
+          setNotification('Ticket was successfully updated')
+          navigate('/tickets')
         })
         .catch(err => {
           const response = err.response;
@@ -46,10 +45,10 @@ export default function UserForm() {
           }
         })
     } else {
-      axiosClient.post('/users', user)
+      axiosClient.post('/tickets', ticket)
         .then(() => {
-          setNotification('User was successfully created')
-          navigate('/users')
+          setNotification('Ticket was successfully created')
+          navigate('/tickets')
         })
         .catch(err => {
           const response = err.response;
@@ -62,8 +61,8 @@ export default function UserForm() {
 
   return (
     <>
-      {user.id && <h1>Update User: {user.name}</h1>}
-      {!user.id && <h1>New User</h1>}
+      {ticket.id && <h1>Update Ticket: {ticket.name}</h1>}
+      {!ticket.id && <h1>New Ticket</h1>}
       <div className="card animated fadeInDown">
         {loading && (
           <div className="text-center">
@@ -79,10 +78,9 @@ export default function UserForm() {
         }
         {!loading && (
           <form onSubmit={onSubmit}>
-            <input value={user.name} onChange={ev => setUser({...user, name: ev.target.value})} placeholder="Name"/>
-            <input value={user.email} onChange={ev => setUser({...user, email: ev.target.value})} placeholder="Email"/>
-            <input type="password" onChange={ev => setUser({...user, password: ev.target.value})} placeholder="Password"/>
-            <input type="password" onChange={ev => setUser({...user, password_confirmation: ev.target.value})} placeholder="Password Confirmation"/>
+            <input value={ticket.name} onChange={ev => setTicket({...ticket, name: ev.target.value})} placeholder="Name"/>
+            <input value={ticket.description} onChange={ev => setTicket({...ticket, description: ev.target.value})} placeholder="Description"/>
+            <input value={ticket.status} onChange={ev => setTicket({...ticket, status: ev.target.value})} placeholder="Status"/>
             <button className="btn">Save</button>
           </form>
         )}
