@@ -15,7 +15,7 @@ class ClientController extends Controller
      */
     public function index()
     {
-        return ClientResource::collection(Client::query()->orderBy('id', 'asc')->paginate(10));
+        return ClientResource::collection(Client::query()->orderBy('id', 'asc')->paginate(5));
     }
 
     /**

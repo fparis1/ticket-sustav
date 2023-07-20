@@ -15,7 +15,7 @@ class TicketController extends Controller
      */
     public function index()
     {
-        return TicketResource::collection(Ticket::query()->orderBy('id', 'asc')->paginate(10));
+        return TicketResource::collection(Ticket::query()->orderBy('id', 'asc')->paginate(5));
     }
 
     /**

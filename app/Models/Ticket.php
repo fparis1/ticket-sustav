@@ -18,5 +18,7 @@ class Ticket extends Model
         'name',
         'description',
         'status',
+        'client_id',
+        'technician_id',
     ];
 }

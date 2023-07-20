@@ -13,7 +13,9 @@ import ClientForm from "./views/ClientForm.jsx";
 import Clients from "./views/Clients.jsx";
 import Technicians from "./views/Technicians.jsx";
 
-const router = createBrowserRouter([
+const router = createBrowserRouter(
+  
+  [
   {
     path: '/',
     element: <DefaultLayout/>,

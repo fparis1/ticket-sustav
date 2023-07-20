@@ -6,7 +6,9 @@ import {useStateContext} from "../context/ContextProvider.jsx";
 export default function Tickets() {
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(false);
-  const {setNotification} = useStateContext()
+  const {setNotification} = useStateContext();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
     getTickets();
@@ -23,17 +25,40 @@ export default function Tickets() {
       })
   }
 
-  const getTickets = () => {
+  const getTickets = (page = 1) => {
     setLoading(true)
-    axiosClient.get('/tickets')
+    axiosClient.get(`/tickets?page=${page}`)
       .then(({ data }) => {
-        setLoading(false)
-        setTickets(data.data)
+        setLoading(false);
+        setTickets(data.data);
+        setTotalPages(data.meta.last_page);
       })
       .catch(() => {
         setLoading(false)
       })
   }
+
+  useEffect(() => {
+    getTickets(currentPage);
+  }, [currentPage]);
+
+  const goToNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const goToPreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const goToPage = (page) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  };
 
   return (
     <div>
@@ -79,6 +104,23 @@ export default function Tickets() {
             </tbody>
           }
         </table>
+        <div style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
+          <button onClick={goToPreviousPage} disabled={currentPage === 1}>
+            Previous
+          </button>
+          {Array.from({ length: totalPages }, (_, index) => index + 1).map((pageNumber) => (
+            <button
+              key={pageNumber}
+              onClick={() => goToPage(pageNumber)}
+              disabled={currentPage === pageNumber}
+            >
+              {pageNumber}
+            </button>
+          ))}
+          <button onClick={goToNextPage} disabled={currentPage === totalPages}>
+            Next
+          </button>
+        </div>
       </div>
     </div>
   )

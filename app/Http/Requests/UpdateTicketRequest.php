@@ -25,6 +25,8 @@ class UpdateTicketRequest extends FormRequest
             'name' => 'required|string',
             'description' => 'required|string',
             'status' => 'required|string',
+            'technician_id' => 'required|string',
+            'client_id' => 'required|string',
         ];
     }
 }

@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string('name');
             $table->string('description');
             $table->string('status');
+            $table->string('client_id');
+            $table->string('technician_id');
         });
     }
 

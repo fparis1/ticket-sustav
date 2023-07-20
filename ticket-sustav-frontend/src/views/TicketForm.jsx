@@ -10,11 +10,42 @@ export default function TicketForm() {
     id: null,
     name: '',
     description: '',
-    status: ''
+    status: '',
+    client_id: '',
+    technician_id: '',
   })
+
+  const [clients, setClients] = useState([]);
+  const [technicians, setTechnicians] = useState([]);
   const [errors, setErrors] = useState(null)
   const [loading, setLoading] = useState(false)
   const {setNotification} = useStateContext()
+
+  // Function to fetch all clients
+  const fetchAllClients = () => {
+    axiosClient
+      .get("/clients")
+      .then(({ data }) => {
+        setClients(data.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching clients: ", error);
+      });
+  };
+
+  const fetchAllTechnicians = () => {
+    axiosClient
+      .get("/users") // Update the API endpoint to the appropriate URL for fetching clients
+      .then(({ data }) => {
+        // Assuming the response data is an array of client objects
+        setTechnicians(data.data);
+        // Save the clients in a variable or context, e.g., setClients(data) or update the context state with the fetched data.
+      })
+      .catch((error) => {
+        console.error("Error fetching clients: ", error);
+        // Handle error if necessary
+      });
+  };
 
   if (id) {
     useEffect(() => {
@@ -59,6 +90,20 @@ export default function TicketForm() {
     }
   }
 
+  useEffect(() => {
+    fetchAllTechnicians();
+    fetchAllClients();
+  }, []);
+
+  /*
+  const handleClientSelect = (ev) => {
+    setTicket({ ...ticket, client_id: ev.target.value });
+  };
+
+  const handleTechniciansSelect = (ev) => {
+    setTicket({ ...ticket, client_id: ev.target.value });
+  };
+  */
   return (
     <>
       {ticket.id && <h1>Update Ticket: {ticket.name}</h1>}
@@ -81,6 +126,22 @@ export default function TicketForm() {
             <input value={ticket.name} onChange={ev => setTicket({...ticket, name: ev.target.value})} placeholder="Name"/>
             <input value={ticket.description} onChange={ev => setTicket({...ticket, description: ev.target.value})} placeholder="Description"/>
             <input value={ticket.status} onChange={ev => setTicket({...ticket, status: ev.target.value})} placeholder="Status"/>
+            <select value={ticket.client_id} onChange={ev => setTicket({...ticket, client_id: ev.target.value})}>
+              {!ticket.client_id && <option value="">Select a client</option>}
+              {clients.map((client) => (
+                <option key={client.id} value={client.id}>
+                  {client.name}
+                </option>
+              ))}
+            </select>
+            <select value={ticket.technician_id} onChange={ev => setTicket({...ticket, technician_id: ev.target.value})}>
+              {!ticket.technician_id && <option value="">Select a technician</option>}
+              {technicians.map((technician) => (
+                <option key={technician.id} value={technician.id}>
+                  {technician.name}
+                </option>
+              ))}
+            </select>
             <button className="btn">Save</button>
           </form>
         )}

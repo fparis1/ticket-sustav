@@ -29,11 +29,11 @@ export default function DefaultLayout() {
   return (
     <div id="defaultLayout">
       <aside>
+        <Link to="/dashboard">Dashboard</Link>
+        <Link to="/users">Users</Link>
+        <Link to="/tickets">Tickets</Link>
         {user.role === "admin" && (
           <>
-            <Link to="/dashboard">Dashboard</Link>
-            <Link to="/users">Users</Link>
-            <Link to="/tickets">Tickets</Link>
             <Link to="/technicians">Technicians</Link>
             <Link to="/clients">Clients</Link>
           </>
