@@ -21,11 +21,17 @@ export default function Tickets() {
     axiosClient.delete(`/tickets/${ticket.id}`)
       .then(() => {
         setNotification('Ticket was successfully deleted')
-        getTickets()
+        const ticketsOnCurrentPage = tickets.filter(t => t.id !== ticket.id);
+        if (ticketsOnCurrentPage.length === 0 && currentPage > 1) {
+          // Redirect to the previous page
+          setCurrentPage(currentPage - 1);
+        } else {
+          getTickets({ currentPage });
+        }
       })
   }
 
-  const getTickets = (page = 1) => {
+  const getTickets = (page) => {
     setLoading(true)
     axiosClient.get(`/tickets?page=${page}`)
       .then(({ data }) => {
@@ -88,6 +94,7 @@ export default function Tickets() {
           }
           {!loading &&
             <tbody>
+            {tickets.length === 0 && <p>No tickets</p>}
             {tickets.map(t => (
               <tr key={t.id}>
                 <td>{t.id}</td>
@@ -95,7 +102,9 @@ export default function Tickets() {
                 <td>{t.description}</td>
                 <td>{t.status}</td>
                 <td>
+                  {t.status !== 'closed' &&
                   <Link className="btn-edit" to={'/tickets/' + t.id}>Edit</Link>
+                  }
                   &nbsp;
                   <button className="btn-delete" onClick={ev => onDeleteClick(t)}>Delete</button>
                 </td>

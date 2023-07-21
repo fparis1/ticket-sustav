@@ -2,12 +2,14 @@ import {useNavigate, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import axiosClient from "../axios-client.js";
 import {useStateContext} from "../context/ContextProvider.jsx";
+import Modal from "react-modal";
+import NewClientForm from "./NewClientForm";
 
 export default function TicketForm() {
   const navigate = useNavigate();
   let {id} = useParams();
   const [ticket, setTicket] = useState({
-    id: null,
+    id: '',
     name: '',
     description: '',
     status: '',
@@ -19,7 +21,12 @@ export default function TicketForm() {
   const [technicians, setTechnicians] = useState([]);
   const [errors, setErrors] = useState(null)
   const [loading, setLoading] = useState(false)
-  const {setNotification} = useStateContext()
+  const {setNotification} = useStateContext();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const toggleClientForm = () => {
+    setIsModalOpen(!isModalOpen);
+  };
 
   // Function to fetch all clients
   const fetchAllClients = () => {
@@ -61,8 +68,6 @@ export default function TicketForm() {
     }, [])
   }
 
-  const isStatusOpen = ticket.status === 'open';
-
   const onSubmit = ev => {
     ev.preventDefault()
     if (ticket.id) {
@@ -91,6 +96,11 @@ export default function TicketForm() {
         })
     }
   }
+
+  const handleNewClientCreate = () => {
+    fetchAllClients();
+    setNotification("New client was successfully created");
+  };
 
   useEffect(() => {
     fetchAllTechnicians();
@@ -139,11 +149,20 @@ export default function TicketForm() {
                 <option key="taken" value="taken">
                   taken
                 </option>
+                {ticket.id && 
                 <option key="closed" value="closed">
                   closed
-                </option>
+                </option>}
             </select>
-
+            <button type="button" onClick={toggleClientForm}>
+              Create New Client
+            </button>
+            <br/><br/>
+            <NewClientForm
+              isOpen={isModalOpen}
+              onClose={toggleClientForm}
+              onCreateClient={handleNewClientCreate}
+            />
             <select value={ticket.client_id} onChange={ev => setTicket({...ticket, client_id: ev.target.value})}>
               {!ticket.client_id && <option value="">Select a client</option>}
               {clients.map((client) => (
