@@ -105,6 +105,7 @@ export default function Clients() {
             </tbody>
           }
         </table>
+        {totalPages > 1 &&
         <div style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
           <button onClick={goToPreviousPage} disabled={currentPage === 1}>
             Previous
@@ -122,6 +123,7 @@ export default function Clients() {
             Next
           </button>
         </div>
+        }
       </div>
     </div>
   )

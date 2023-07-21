@@ -61,6 +61,8 @@ export default function TicketForm() {
     }, [])
   }
 
+  const isStatusOpen = ticket.status === 'open';
+
   const onSubmit = ev => {
     ev.preventDefault()
     if (ticket.id) {
@@ -95,15 +97,6 @@ export default function TicketForm() {
     fetchAllClients();
   }, []);
 
-  /*
-  const handleClientSelect = (ev) => {
-    setTicket({ ...ticket, client_id: ev.target.value });
-  };
-
-  const handleTechniciansSelect = (ev) => {
-    setTicket({ ...ticket, client_id: ev.target.value });
-  };
-  */
   return (
     <>
       {ticket.id && <h1>Update Ticket: {ticket.name}</h1>}
@@ -125,7 +118,32 @@ export default function TicketForm() {
           <form onSubmit={onSubmit}>
             <input value={ticket.name} onChange={ev => setTicket({...ticket, name: ev.target.value})} placeholder="Name"/>
             <input value={ticket.description} onChange={ev => setTicket({...ticket, description: ev.target.value})} placeholder="Description"/>
-            <input value={ticket.status} onChange={ev => setTicket({...ticket, status: ev.target.value})} placeholder="Status"/>
+            {/*<input value={ticket.status} onChange={ev => setTicket({...ticket, status: ev.target.value})} placeholder="Status"/>*/}
+
+            <select
+              value={ticket.status}
+              onChange={ev => {
+                const selectedStatus = ev.target.value;
+                // If the selected status is "open", set the technician_id to '-'
+                if (selectedStatus === 'open') {
+                  setTicket({ ...ticket, status: selectedStatus, technician_id: '-' });
+                } else {
+                  setTicket({ ...ticket, status: selectedStatus });
+                }
+              }}
+            >
+              {!ticket.status && <option value="">Select a status</option>}
+                <option key="open" value="open">
+                  open
+                </option>
+                <option key="taken" value="taken">
+                  taken
+                </option>
+                <option key="closed" value="closed">
+                  closed
+                </option>
+            </select>
+
             <select value={ticket.client_id} onChange={ev => setTicket({...ticket, client_id: ev.target.value})}>
               {!ticket.client_id && <option value="">Select a client</option>}
               {clients.map((client) => (
@@ -134,14 +152,19 @@ export default function TicketForm() {
                 </option>
               ))}
             </select>
-            <select value={ticket.technician_id} onChange={ev => setTicket({...ticket, technician_id: ev.target.value})}>
-              {!ticket.technician_id && <option value="">Select a technician</option>}
-              {technicians.map((technician) => (
-                <option key={technician.id} value={technician.id}>
-                  {technician.name}
-                </option>
-              ))}
-            </select>
+            {ticket.status !== 'open' && ticket.status !== '' && ( // Only show the technician select element when the status is not "open"
+              <select
+                value={ticket.technician_id}
+                onChange={ev => setTicket({ ...ticket, technician_id: ev.target.value })}
+              >
+                {!ticket.technician_id && <option value="">Select a technician</option>}
+                {technicians.map((technician) => (
+                  <option key={technician.id} value={technician.id}>
+                    {technician.name}
+                  </option>
+                ))}
+              </select>
+            )}
             <button className="btn">Save</button>
           </form>
         )}

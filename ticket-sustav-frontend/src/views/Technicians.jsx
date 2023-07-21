@@ -6,7 +6,9 @@ import {useStateContext} from "../context/ContextProvider.jsx";
 export default function Technicians() {
   const [technicians, setTechnicians] = useState([]);
   const [loading, setLoading] = useState(false);
-  const {setNotification} = useStateContext()
+  const {setNotification} = useStateContext();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
     getTechnicians();
@@ -23,17 +25,40 @@ export default function Technicians() {
       })
   }
 
-  const getTechnicians = () => {
+  const getTechnicians = (page = 1) => {
     setLoading(true)
-    axiosClient.get('/users')
+    axiosClient.get(`/users?page=${page}`)
       .then(({ data }) => {
-        setLoading(false)
-        setTechnicians(data.data)
+        setLoading(false);
+        setTechnicians(data.data);
+        setTotalPages(data.meta.last_page);
       })
       .catch(() => {
         setLoading(false)
       })
   }
+
+  useEffect(() => {
+    getTechnicians(currentPage);
+  }, [currentPage]);
+
+  const goToNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const goToPreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const goToPage = (page) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  };
 
   return (
     <div>
@@ -79,6 +104,25 @@ export default function Technicians() {
             </tbody>
           }
         </table>
+        {totalPages > 1 &&
+        <div style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
+        <button onClick={goToPreviousPage} disabled={currentPage === 1}>
+          Previous
+        </button>
+        {Array.from({ length: totalPages }, (_, index) => index + 1).map((pageNumber) => (
+          <button
+            key={pageNumber}
+            onClick={() => goToPage(pageNumber)}
+            disabled={currentPage === pageNumber}
+          >
+            {pageNumber}
+          </button>
+        ))}
+        <button onClick={goToNextPage} disabled={currentPage === totalPages}>
+          Next
+        </button>
+      </div>
+        }
       </div>
     </div>
   )
