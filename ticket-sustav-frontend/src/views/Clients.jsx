@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 import axiosClient from "../axios-client.js";
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {useStateContext} from "../context/ContextProvider.jsx";
 
 export default function Clients() {
@@ -9,10 +9,26 @@ export default function Clients() {
   const {setNotification} = useStateContext();
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const {user} = useStateContext();
+  const navigate = useNavigate();
 
   useEffect(() => {
     getClients();
   }, [])
+
+  useEffect(() => {
+    debugger;
+    if (user) {
+      checkRole();
+    }
+  }, [user]);
+
+  const checkRole = () => {
+    debugger;
+    if (user.role === "tech") {
+      navigate('/dashboard');
+    }
+  };
 
   const onDeleteClick = client => {
     if (!window.confirm("Are you sure you want to delete this client?")) {

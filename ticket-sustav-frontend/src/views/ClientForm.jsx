@@ -15,6 +15,7 @@ export default function ClientForm() {
   const [errors, setErrors] = useState(null)
   const [loading, setLoading] = useState(false)
   const {setNotification} = useStateContext()
+  const {user} = useStateContext()
 
   if (id) {
     useEffect(() => {
@@ -58,6 +59,18 @@ export default function ClientForm() {
         })
     }
   }
+
+  useEffect(() => {
+    if (user) {
+      checkRole();
+    }
+  }, [user]);
+
+  const checkRole = () => {
+    if (user.role === "tech") {
+      navigate('/dashboard');
+    }
+  };
 
   return (
     <>

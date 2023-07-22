@@ -21,12 +21,18 @@ export default function TicketForm() {
   const [technicians, setTechnicians] = useState([]);
   const [errors, setErrors] = useState(null)
   const [loading, setLoading] = useState(false)
-  const {setNotification} = useStateContext();
+  const {user, setNotification} = useStateContext();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const toggleClientForm = () => {
     setIsModalOpen(!isModalOpen);
   };
+
+  useEffect(() => {
+    if (user) {
+      checkRole();
+    }
+  }, [user]);
 
  // Function to fetch all clients
  const fetchAllClients = () => {
@@ -105,6 +111,12 @@ const fetchAllTechnicians = () => {
     }, [])
   }
 
+  const checkRole = () => {
+    if (user.role === "tech") {
+      navigate('/dashboard');
+    }
+  };
+
   const onSubmit = ev => {
     ev.preventDefault()
     if (ticket.id) {
@@ -163,10 +175,8 @@ const fetchAllTechnicians = () => {
         }
         {!loading && (
           <form onSubmit={onSubmit}>
-            <input value={ticket.name} onChange={ev => setTicket({...ticket, name: ev.target.value})} placeholder="Name"/>
-            <input value={ticket.description} onChange={ev => setTicket({...ticket, description: ev.target.value})} placeholder="Description"/>
-            {/*<input value={ticket.status} onChange={ev => setTicket({...ticket, status: ev.target.value})} placeholder="Status"/>*/}
-
+            <input value={ticket.name} onChange={ev => setTicket({...ticket, name: ev.target.value})} placeholder="Name" disabled={user.role === "tech"}/>
+            <input value={ticket.description} onChange={ev => setTicket({...ticket, description: ev.target.value})} placeholder="Description" disabled={user.role === "tech"}/>
             <select
               value={ticket.status}
               onChange={ev => {
@@ -176,7 +186,12 @@ const fetchAllTechnicians = () => {
                 if (selectedStatus === 'open') {
                   setTicket({ ...ticket, status: selectedStatus, technician_id: '-' });
                 } else if (selectedStatus === 'taken') {
-                  setTicket({ ...ticket, status: selectedStatus, technician_id: '' });
+                  if (user.role === 'admin') {
+                    setTicket({ ...ticket, status: selectedStatus, technician_id: '' });
+                  }
+                  else {
+                    setTicket({ ...ticket, status: selectedStatus, technician_id: '' + user.id });
+                  }
                 } else {
                   setTicket({ ...ticket, status: selectedStatus });
                 }
@@ -195,16 +210,16 @@ const fetchAllTechnicians = () => {
                 </option>
               )}
             </select>
+            {user.role === "admin" && 
             <button type="button" onClick={toggleClientForm}>
               Create New Client
-            </button>
-            <br/><br/>
+            </button>}
             <NewClientForm
               isOpen={isModalOpen}
               onClose={toggleClientForm}
               onCreateClient={handleNewClientCreate}
             />
-            <select value={ticket.client_id} onChange={ev => setTicket({...ticket, client_id: ev.target.value})}>
+            <select value={ticket.client_id} onChange={ev => setTicket({...ticket, client_id: ev.target.value})} disabled={user.role === "tech"}>
               {!ticket.client_id && <option value="">Select a client</option>}
               {clients.map((client) => (
                 <option key={client.id} value={client.id}>
@@ -212,7 +227,7 @@ const fetchAllTechnicians = () => {
                 </option>
               ))}
             </select>
-            {ticket.status !== 'open' && ticket.status !== '' && ( // Only show the technician select element when the status is not "open"
+            {ticket.status !== 'open' && ticket.status !== '' && user.role === "admin" && ( // Only show the technician select element when the status is not "open"
               <select
                 value={ticket.technician_id}
                 onChange={ev => setTicket({ ...ticket, technician_id: ev.target.value })}

@@ -14,9 +14,17 @@ class TicketController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-    {
-        return TicketResource::collection(Ticket::query()->orderBy('id', 'asc')->paginate(5));
+{
+    $user = auth()->user();
+    $query = Ticket::query();
+
+    // Check if the user's role is 'tech', then filter tickets based on technician_id
+    if ($user->role === 'tech') {
+        $query->where('technician_id', $user->id)->orWhere('technician_id', '-');;
     }
+
+    return TicketResource::collection($query->orderBy('id', 'asc')->paginate(5));
+}
 
     /**
      * Store a newly created resource in storage.

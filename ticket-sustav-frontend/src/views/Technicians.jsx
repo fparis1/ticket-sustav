@@ -10,7 +10,7 @@ export default function Technicians() {
   const {setNotification} = useStateContext();
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const user = useStateContext();
+  const {user} = useStateContext();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -18,14 +18,13 @@ export default function Technicians() {
   }, [])
 
   useEffect(() => {
-    if (user.user) {
+    if (user) {
       checkRole();
     }
   }, [user]);
 
   const checkRole = () => {
-    if (user.user.role === "tech") {
-      console.log("tu sam");
+    if (user.role === "tech") {
       navigate('/dashboard');
     }
   };

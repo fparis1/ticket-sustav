@@ -1,18 +1,34 @@
 import {useEffect, useState} from "react";
 import axiosClient from "../axios-client.js";
-import {Link, Navigate} from "react-router-dom";
+import {Link} from "react-router-dom";
 import {useStateContext} from "../context/ContextProvider.jsx";
 
 export default function Tickets() {
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(false);
-  const {setNotification} = useStateContext();
+  const {user, setNotification} = useStateContext();
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [technicians, setTechnicians] = useState({});
 
   useEffect(() => {
     getTickets();
+    fetchTechnicians();
   }, [])
+
+  const fetchTechnicians = () => {
+    axiosClient.get("/users")
+      .then(({ data }) => {
+        const techniciansData = data.data.reduce((acc, technician) => {
+          acc[technician.id] = technician;
+          return acc;
+        }, {});
+        setTechnicians(techniciansData);
+      })
+      .catch(() => {
+        // Handle error if needed
+      });
+  };
 
   const onDeleteClick = ticket => {
     if (!window.confirm("Are you sure you want to delete this ticket?")) {
@@ -23,7 +39,6 @@ export default function Tickets() {
         setNotification('Ticket was successfully deleted')
         const ticketsOnCurrentPage = tickets.filter(t => t.id !== ticket.id);
         if (ticketsOnCurrentPage.length === 0 && currentPage > 1) {
-          // Redirect to the previous page
           setCurrentPage(currentPage - 1);
         } else {
           getTickets({ currentPage });
@@ -70,16 +85,16 @@ export default function Tickets() {
     <div>
       <div style={{display: 'flex', justifyContent: "space-between", alignItems: "center"}}>
         <h1>Tickets</h1>
-        <Link className="btn-add" to="/tickets/new">Add new ticket</Link>
+        {user.role === "admin" && <Link className="btn-add" to="/tickets/new">Add new ticket</Link>}
       </div>
       <div className="card animated fadeInDown">
         <table>
           <thead>
           <tr>
-            <th>ID</th>
             <th>Name</th>
             <th>Description</th>
             <th>Status</th>
+            <th>Technician</th>
             <th>Actions</th>
           </tr>
           </thead>
@@ -97,10 +112,10 @@ export default function Tickets() {
             {tickets.length === 0 && <p>No tickets</p>}
             {tickets.map(t => (
               <tr key={t.id}>
-                <td>{t.id}</td>
                 <td>{t.name}</td>
                 <td>{t.description}</td>
                 <td>{t.status}</td>
+                <td>{technicians[t.technician_id]?.name || "-"}</td>
                 <td>
                   <Link className="btn-edit" id="show" to={'/tickets/' + t.id + '/' + t.id}>Show</Link>
                   &nbsp;
@@ -108,7 +123,7 @@ export default function Tickets() {
                   <Link className="btn-edit" to={'/tickets/' + t.id}>Edit</Link>
                   }
                   &nbsp;
-                  <button className="btn-delete" onClick={ev => onDeleteClick(t)}>Delete</button>
+                  {user.role === "admin" && <button className="btn-delete" onClick={ev => onDeleteClick(t)}>Delete</button>}
                 </td>
               </tr>
             ))}
