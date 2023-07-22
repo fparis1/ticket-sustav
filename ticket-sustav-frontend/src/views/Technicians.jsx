@@ -1,7 +1,8 @@
 import {useEffect, useState} from "react";
 import axiosClient from "../axios-client.js";
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {useStateContext} from "../context/ContextProvider.jsx";
+import React from 'react';
 
 export default function Technicians() {
   const [technicians, setTechnicians] = useState([]);
@@ -9,10 +10,25 @@ export default function Technicians() {
   const {setNotification} = useStateContext();
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const user = useStateContext();
+  const navigate = useNavigate();
 
   useEffect(() => {
     getTechnicians();
   }, [])
+
+  useEffect(() => {
+    if (user.user) {
+      checkRole();
+    }
+  }, [user]);
+
+  const checkRole = () => {
+    if (user.user.role === "tech") {
+      console.log("tu sam");
+      navigate('/dashboard');
+    }
+  };
 
   const onDeleteClick = technician => {
     if (!window.confirm("Are you sure you want to delete this technician?")) {

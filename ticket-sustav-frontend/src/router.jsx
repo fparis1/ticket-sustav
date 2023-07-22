@@ -5,10 +5,9 @@ import GuestLayout from "./components/GuestLayout";
 import Login from "./views/Login";
 import NotFound from "./views/NotFound";
 import Signup from "./views/Signup";
-import Users from "./views/Users";
 import Tickets from "./views/Tickets.jsx";
-import UserForm from "./views/UserForm";
 import TicketForm from "./views/TicketForm.jsx";
+import TicketShow from "./views/TicketShow.jsx";
 import ClientForm from "./views/ClientForm.jsx";
 import Clients from "./views/Clients.jsx";
 import Technicians from "./views/Technicians.jsx";
@@ -29,18 +28,6 @@ const router = createBrowserRouter(
         element: <Dashboard/>
       },
       {
-        path: '/users',
-        element: <Users/>
-      },
-      {
-        path: '/users/new',
-        element: <UserForm key="userCreate" />
-      },
-      {
-        path: '/users/:id',
-        element: <UserForm key="userUpdate" />
-      },
-      {
         path: '/tickets',
         element: <Tickets/>
       },
@@ -51,6 +38,10 @@ const router = createBrowserRouter(
       {
         path: '/tickets/:id',
         element: <TicketForm key="ticketUpdate" />
+      },
+      {
+        path: '/tickets/:id/:id',
+        element: <TicketShow key="ticketShow" />
       },
       {
         path: '/clients',

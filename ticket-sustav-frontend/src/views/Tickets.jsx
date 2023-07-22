@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 import axiosClient from "../axios-client.js";
-import {Link} from "react-router-dom";
+import {Link, Navigate} from "react-router-dom";
 import {useStateContext} from "../context/ContextProvider.jsx";
 
 export default function Tickets() {
@@ -102,6 +102,8 @@ export default function Tickets() {
                 <td>{t.description}</td>
                 <td>{t.status}</td>
                 <td>
+                  <Link className="btn-edit" id="show" to={'/tickets/' + t.id + '/' + t.id}>Show</Link>
+                  &nbsp;
                   {t.status !== 'closed' &&
                   <Link className="btn-edit" to={'/tickets/' + t.id}>Edit</Link>
                   }

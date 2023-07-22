@@ -263,3 +263,6 @@ table > tbody > tr > td {
 #floatRight {
     float:right;
 }
+#show {
+    background-color: #00682f;
+}

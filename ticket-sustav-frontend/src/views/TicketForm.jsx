@@ -134,25 +134,29 @@ export default function TicketForm() {
               value={ticket.status}
               onChange={ev => {
                 const selectedStatus = ev.target.value;
-                // If the selected status is "open", set the technician_id to '-'
+                // If the selected status is "open", set the technician_id to ''
+                // If the selected status is "taken", reset the technician_id to an empty value (show the technician select element)
                 if (selectedStatus === 'open') {
                   setTicket({ ...ticket, status: selectedStatus, technician_id: '-' });
+                } else if (selectedStatus === 'taken') {
+                  setTicket({ ...ticket, status: selectedStatus, technician_id: '' });
                 } else {
                   setTicket({ ...ticket, status: selectedStatus });
                 }
               }}
             >
               {!ticket.status && <option value="">Select a status</option>}
-                <option key="open" value="open">
-                  open
-                </option>
-                <option key="taken" value="taken">
-                  taken
-                </option>
-                {ticket.id && 
+              <option key="open" value="open">
+                open
+              </option>
+              <option key="taken" value="taken">
+                taken
+              </option>
+              {ticket.id && (
                 <option key="closed" value="closed">
                   closed
-                </option>}
+                </option>
+              )}
             </select>
             <button type="button" onClick={toggleClientForm}>
               Create New Client
