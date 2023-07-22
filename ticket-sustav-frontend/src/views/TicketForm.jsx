@@ -28,7 +28,6 @@ export default function TicketForm() {
     setIsModalOpen(!isModalOpen);
   };
 
-  // Function to fetch all clients
  // Function to fetch all clients
  const fetchAllClients = () => {
   const allClients = []; // Initialize an array to store all clients
@@ -61,18 +60,35 @@ export default function TicketForm() {
   fetchClientsByPage(1);
 };
 
-  const fetchAllTechnicians = () => {
+const fetchAllTechnicians = () => {
+  const allTechnicians = []; // Initialize an array to store all technicians
+
+  // Recursive function to fetch technicians from each page
+  const fetchTechniciansByPage = (page) => {
     axiosClient
-      .get("/users") // Update the API endpoint to the appropriate URL for fetching clients
+      .get("/users", {
+        params: {
+          page, // Pass the current page as a query parameter
+        },
+      })
       .then(({ data }) => {
-        // Assuming the response data is an array of client objects
-        setTechnicians(data.data);
-        // Save the clients in a variable or context, e.g., setClients(data) or update the context state with the fetched data.
+        const { data: technicians, meta } = data;
+        allTechnicians.push(...technicians); // Add the fetched technicians to the array
+
+        // Check if there are more pages and recursively fetch them if needed
+        if (meta.current_page < meta.last_page) {
+          fetchTechniciansByPage(meta.current_page + 1);
+        } else {
+          setTechnicians(allTechnicians); // Set the complete array of technicians once all pages are fetched
+        }
       })
       .catch((error) => {
-        console.error("Error fetching clients: ", error);
-        // Handle error if necessary
+        console.error("Error fetching technicians: ", error);
       });
+  };
+
+  // Start fetching technicians from the first page
+  fetchTechniciansByPage(1);
   };
 
   if (id) {
