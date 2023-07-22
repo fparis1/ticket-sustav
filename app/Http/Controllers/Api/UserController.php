@@ -19,7 +19,7 @@ class UserController extends Controller
     {
         $users = User::where('role', 'tech')
                  ->orderBy('id', 'asc')
-                 ->paginate(2);
+                 ->paginate(5);
 
     return UserResource::collection($users);
     }

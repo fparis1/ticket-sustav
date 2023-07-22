@@ -29,16 +29,37 @@ export default function TicketForm() {
   };
 
   // Function to fetch all clients
-  const fetchAllClients = () => {
+ // Function to fetch all clients
+ const fetchAllClients = () => {
+  const allClients = []; // Initialize an array to store all clients
+
+  // Recursive function to fetch clients from each page
+  const fetchClientsByPage = (page) => {
     axiosClient
-      .get("/clients")
+      .get("/clients", {
+        params: {
+          page, // Pass the current page as a query parameter
+        },
+      })
       .then(({ data }) => {
-        setClients(data.data);
+        const { data: clients, meta } = data;
+        allClients.push(...clients); // Add the fetched clients to the array
+
+        // Check if there are more pages and recursively fetch them if needed
+        if (meta.current_page < meta.last_page) {
+          fetchClientsByPage(meta.current_page + 1);
+        } else {
+          setClients(allClients); // Set the complete array of clients once all pages are fetched
+        }
       })
       .catch((error) => {
         console.error("Error fetching clients: ", error);
       });
   };
+
+  // Start fetching clients from the first page
+  fetchClientsByPage(1);
+};
 
   const fetchAllTechnicians = () => {
     axiosClient
