@@ -125,6 +125,7 @@ export default function Tickets() {
                   &nbsp;
                   {user.role === "admin" && <button className="btn-delete" onClick={ev => onDeleteClick(t)}>Delete</button>}
                 </td>
+                <Link to={'/comments/' + t.id}>Comment</Link>
               </tr>
             ))}
             </tbody>

@@ -28,12 +28,6 @@ export default function TicketForm() {
     setIsModalOpen(!isModalOpen);
   };
 
-  useEffect(() => {
-    if (user) {
-      checkRole();
-    }
-  }, [user]);
-
  // Function to fetch all clients
  const fetchAllClients = () => {
   const allClients = []; // Initialize an array to store all clients
@@ -110,12 +104,6 @@ const fetchAllTechnicians = () => {
         })
     }, [])
   }
-
-  const checkRole = () => {
-    if (user.role === "tech") {
-      navigate('/dashboard');
-    }
-  };
 
   const onSubmit = ev => {
     ev.preventDefault()

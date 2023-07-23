@@ -11,6 +11,7 @@ import TicketShow from "./views/TicketShow.jsx";
 import ClientForm from "./views/ClientForm.jsx";
 import Clients from "./views/Clients.jsx";
 import Technicians from "./views/Technicians.jsx";
+import Comments from "./views/Comments.jsx";
 
 const router = createBrowserRouter(
   
@@ -58,6 +59,10 @@ const router = createBrowserRouter(
       {
         path: '/technicians',
         element: <Technicians/>
+      },
+      {
+        path: '/comments/:ticketId',
+        element: <Comments key="commentShow"/>
       }
     ]
   },
