@@ -83,10 +83,15 @@ export default function TicketForm() {
             ))}
           </div>
         }
+            Ticket name:
             <input value={ticket.name} />
+            Ticket description:
             <input value={ticket.description} />
+            Ticket status:
             <input value={ticket.status} />
+            Client name:
             <input value={client.name} />
+            {technician.name && <p>Technician name:</p>}
             {technician.name && <input value={technician.name}/>}
       </div>
     </>

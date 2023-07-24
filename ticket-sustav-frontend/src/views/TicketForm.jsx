@@ -163,8 +163,11 @@ const fetchAllTechnicians = () => {
         }
         {!loading && (
           <form onSubmit={onSubmit}>
+            Ticket name:
             <input value={ticket.name} onChange={ev => setTicket({...ticket, name: ev.target.value})} placeholder="Name" disabled={user.role === "tech"}/>
+            Ticket description:
             <input value={ticket.description} onChange={ev => setTicket({...ticket, description: ev.target.value})} placeholder="Description" disabled={user.role === "tech"}/>
+            Ticket status:
             <select
               value={ticket.status}
               onChange={ev => {
@@ -202,11 +205,14 @@ const fetchAllTechnicians = () => {
             <button type="button" onClick={toggleClientForm}>
               Create New Client
             </button>}
+            {user.role === "admin" && <br/>}
+            {user.role === "admin" && <br/>}
             <NewClientForm
               isOpen={isModalOpen}
               onClose={toggleClientForm}
               onCreateClient={handleNewClientCreate}
             />
+            Client name:
             <select value={ticket.client_id} onChange={ev => setTicket({...ticket, client_id: ev.target.value})} disabled={user.role === "tech"}>
               {!ticket.client_id && <option value="">Select a client</option>}
               {clients.map((client) => (
@@ -215,6 +221,7 @@ const fetchAllTechnicians = () => {
                 </option>
               ))}
             </select>
+            {ticket.status !== 'open' && ticket.status !== '' && user.role === "admin" && <p>Technician name:</p>}
             {ticket.status !== 'open' && ticket.status !== '' && user.role === "admin" && ( // Only show the technician select element when the status is not "open"
               <select
                 value={ticket.technician_id}

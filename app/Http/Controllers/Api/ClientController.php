@@ -7,15 +7,30 @@ use App\Models\Client;
 use App\Http\Requests\StoreClientRequest;
 use App\Http\Requests\UpdateClientRequest;
 use App\Http\Resources\ClientResource;
+use Illuminate\Http\Request;
 
 class ClientController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return ClientResource::collection(Client::query()->orderBy('id', 'asc')->paginate(5));
+
+        $sortBy = $request->query('sort_by', 'id'); 
+        $sortDirection = $request->query('sort_dir', 'asc');
+
+        $clientsQuery = Client::query()->orderBy($sortBy, $sortDirection);
+
+         if ($sortBy === 'name') {
+             $clientsQuery->orderBy('name', $sortDirection);
+         } elseif ($sortBy === 'email') {
+             $clientsQuery->orderBy('email', $sortDirection);
+         } elseif ($sortBy === 'phone') {
+             $clientsQuery->orderBy('phone', $sortDirection);
+         }
+
+        return ClientResource::collection($clientsQuery->paginate(5));
     }
 
     /**

@@ -7,23 +7,38 @@ use App\Models\Ticket;
 use App\Http\Requests\StoreTicketRequest;
 use App\Http\Requests\UpdateTicketRequest;
 use App\Http\Resources\TicketResource;
+use Illuminate\Http\Request;
 
 class TicketController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
 {
     $user = auth()->user();
-    $query = Ticket::query();
+
+    $sortBy = $request->query('sort_by', 'id'); 
+    $sortDirection = $request->query('sort_dir', 'asc');
+
+    $ticketsQuery = Ticket::query()->orderBy($sortBy, $sortDirection);
 
     // Check if the user's role is 'tech', then filter tickets based on technician_id
     if ($user->role === 'tech') {
-        $query->where('technician_id', $user->id)->orWhere('technician_id', '-');;
+        $ticketsQuery->where('technician_id', $user->id)->orWhere('technician_id', '-');;
     }
 
-    return TicketResource::collection($query->orderBy('id', 'asc')->paginate(5));
+    if ($sortBy === 'name') {
+        $ticketsQuery->orderBy('name', $sortDirection);
+    } elseif ($sortBy === 'description') {
+        $ticketsQuery->orderBy('description', $sortDirection);
+    } elseif ($sortBy === 'status') {
+        $ticketsQuery->orderBy('status', $sortDirection);
+    } elseif ($sortBy === 'technician_id') {
+        $ticketsQuery->orderBy('technician_id', $sortDirection);
+    }
+
+    return TicketResource::collection($ticketsQuery->paginate(5));
 }
 
     /**

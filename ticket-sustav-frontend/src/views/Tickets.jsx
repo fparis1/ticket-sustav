@@ -10,6 +10,8 @@ export default function Tickets() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [technicians, setTechnicians] = useState({});
+  const [currentSortOption, setCurrentSortOption] = useState('id');
+  const [currentSortDirection, setCurrentSortDirection] = useState('asc');
 
   useEffect(() => {
     getTickets();
@@ -46,22 +48,23 @@ export default function Tickets() {
       })
   }
 
-  const getTickets = (page) => {
-    setLoading(true)
-    axiosClient.get(`/tickets?page=${page}`)
+  const getTickets = (page = 1, sortBy = 'id', sortDir = 'desc') => {
+    setLoading(true);
+    axiosClient
+      .get(`/tickets?page=${page}&sort_by=${sortBy}&sort_dir=${sortDir}`)
       .then(({ data }) => {
         setLoading(false);
         setTickets(data.data);
         setTotalPages(data.meta.last_page);
       })
       .catch(() => {
-        setLoading(false)
-      })
-  }
+        setLoading(false);
+      });
+  };
 
   useEffect(() => {
-    getTickets(currentPage);
-  }, [currentPage]);
+    getTickets(currentPage, currentSortOption, currentSortDirection);
+  }, [currentPage, currentSortOption, currentSortDirection]);
 
   const goToNextPage = () => {
     if (currentPage < totalPages) {
@@ -81,6 +84,41 @@ export default function Tickets() {
     }
   };
 
+  const handleSortChange = (option) => {
+    if (option === currentSortOption) {
+      // If the same option is clicked again, toggle the sort direction
+      toggleSortDirection();
+    } else {
+      // If a different option is clicked, set the sort option and default to ascending order
+      setCurrentSortOption(option);
+      setCurrentSortDirection('asc');
+    }
+  };
+  
+  const toggleSortDirection = () => {
+    setCurrentSortDirection((prevDir) => (prevDir === 'asc' ? 'desc' : 'asc'));
+  };
+
+  const renderSortButton = (option, displayName) => {
+    const isSelected = option === currentSortOption;
+    const arrow = isSelected ? (currentSortDirection === 'asc' ? '▲' : '▼') : '';
+    const buttonStyle = {
+      background: 'none',
+      border: 'none',
+      cursor: 'pointer',
+      padding: '0',
+      fontWeight: 'bold',
+    };
+
+    return (
+      <th>
+        <button style={buttonStyle} onClick={() => handleSortChange(option)}>
+          {displayName} {isSelected && arrow}
+        </button>
+      </th>
+    );
+  };
+
   return (
     <div>
       <div style={{display: 'flex', justifyContent: "space-between", alignItems: "center"}}>
@@ -91,10 +129,10 @@ export default function Tickets() {
         <table>
           <thead>
           <tr>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Status</th>
-            <th>Technician</th>
+            {renderSortButton('name', 'Name')}
+            {renderSortButton('description', 'Description')}
+            {renderSortButton('status', 'Status')}
+            {renderSortButton('technician_id', 'Technician')}
             <th>Actions</th>
             <th>Comments</th>
           </tr>
@@ -126,7 +164,7 @@ export default function Tickets() {
                   &nbsp;
                   {user.role === "admin" && <button className="btn-delete" onClick={ev => onDeleteClick(t)}>Delete</button>}
                 </td>
-                <td><Link className="btn-edit" to={'/comments/' + t.id}>Comment</Link></td>
+                <td><Link className="btn-edit" id="comment" to={'/comments/' + t.id}>Comment</Link></td>
               </tr>
             ))}
             </tbody>

@@ -80,7 +80,7 @@ export default function Comments() {
     <div>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <h1>Comments for {ticket.name}</h1>
-        <button className="btn-add" onClick={() => setShowAddComment(!showAddComment)}>
+        <button className={showAddComment ? "btn-delete" : "btn-add"} onClick={() => setShowAddComment(!showAddComment)}>
           {showAddComment ? "Cancel" : "Add new comment"}
         </button>
       </div>
@@ -91,7 +91,7 @@ export default function Comments() {
               Description:
               <input type="text" name="description" required />
             </label>
-            <button type="submit">Add Comment</button>
+            <button type="submit" className="btn-add">Add Comment</button>
           </form>
         </div>
       )}

@@ -11,20 +11,20 @@ export default function Clients() {
   const [totalPages, setTotalPages] = useState(1);
   const {user} = useStateContext();
   const navigate = useNavigate();
+  const [currentSortOption, setCurrentSortOption] = useState('id');
+  const [currentSortDirection, setCurrentSortDirection] = useState('asc');
 
   useEffect(() => {
     getClients();
   }, [])
 
   useEffect(() => {
-    debugger;
     if (user) {
       checkRole();
     }
   }, [user]);
 
   const checkRole = () => {
-    debugger;
     if (user.role === "tech") {
       navigate('/dashboard');
     }
@@ -41,10 +41,10 @@ export default function Clients() {
       })
   }
 
-  const getClients = (page = 1) => {
+  const getClients = (page = 1, sortBy = 'id', sortDir = 'desc') => {
     setLoading(true);
     axiosClient
-      .get(`/clients?page=${page}`)
+      .get(`/clients?page=${page}&sort_by=${sortBy}&sort_dir=${sortDir}`)
       .then(({ data }) => {
         setLoading(false);
         setClients(data.data);
@@ -56,8 +56,8 @@ export default function Clients() {
   };
 
   useEffect(() => {
-    getClients(currentPage);
-  }, [currentPage]);
+    getClients(currentPage, currentSortOption, currentSortDirection);
+  }, [currentPage, currentSortOption, currentSortDirection]);
 
   const goToNextPage = () => {
     if (currentPage < totalPages) {
@@ -77,6 +77,41 @@ export default function Clients() {
     }
   };
 
+  const handleSortChange = (option) => {
+    if (option === currentSortOption) {
+      // If the same option is clicked again, toggle the sort direction
+      toggleSortDirection();
+    } else {
+      // If a different option is clicked, set the sort option and default to ascending order
+      setCurrentSortOption(option);
+      setCurrentSortDirection('asc');
+    }
+  };
+  
+  const toggleSortDirection = () => {
+    setCurrentSortDirection((prevDir) => (prevDir === 'asc' ? 'desc' : 'asc'));
+  };
+
+  const renderSortButton = (option, displayName) => {
+    const isSelected = option === currentSortOption;
+    const arrow = isSelected ? (currentSortDirection === 'asc' ? '▲' : '▼') : '';
+    const buttonStyle = {
+      background: 'none',
+      border: 'none',
+      cursor: 'pointer',
+      padding: '0',
+      fontWeight: 'bold',
+    };
+
+    return (
+      <th>
+        <button style={buttonStyle} onClick={() => handleSortChange(option)}>
+          {displayName} {isSelected && arrow}
+        </button>
+      </th>
+    );
+  };
+
   return (
     <div>
       <div style={{display: 'flex', justifyContent: "space-between", alignItems: "center"}}>
@@ -86,13 +121,12 @@ export default function Clients() {
       <div className="card animated fadeInDown">
         <table>
           <thead>
-          <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Phone</th>
-            <th>Actions</th>
-          </tr>
+            <tr>
+              {renderSortButton('name', 'Name')}
+              {renderSortButton('email', 'Email')}
+              {renderSortButton('phone', 'Phone')}
+              <th>Actions</th>
+            </tr>
           </thead>
           {loading &&
             <tbody>
@@ -107,7 +141,6 @@ export default function Clients() {
             <tbody>
             {clients.map(c => (
               <tr key={c.id}>
-                <td>{c.id}</td>
                 <td>{c.name}</td>
                 <td>{c.email}</td>
                 <td>{c.phone}</td>

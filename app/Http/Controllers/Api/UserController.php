@@ -17,9 +17,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = User::where('role', 'tech')->orwhere('role', 'admin')
-                 ->orderBy('id', 'asc')
-                 ->paginate(5);
+        $users = User::orderBy('id', 'asc')->paginate(5);
 
     return UserResource::collection($users);
     }

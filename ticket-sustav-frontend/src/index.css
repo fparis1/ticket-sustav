@@ -266,3 +266,6 @@ table > tbody > tr > td {
 #show {
     background-color: #00682f;
 }
+#comment {
+    background-color: grey;
+}
