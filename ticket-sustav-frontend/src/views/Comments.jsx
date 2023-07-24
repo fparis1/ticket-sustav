@@ -8,6 +8,8 @@ export default function Comments() {
   const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState([]);
   const [ticket, setTicket] = useState(true);
+  const {user} = useStateContext();
+  const [showAddComment, setShowAddComment] = useState(false);
 
   let {ticketId} = useParams();
 
@@ -52,12 +54,52 @@ export default function Comments() {
     return users.find(user => String(user.id) === userId);
   };
 
+  const handleAddComment = async (e) => {
+    e.preventDefault();
+    // Get the comment description from the form
+    const description = e.target.elements.description.value;
+
+    // Create a new comment object with the required data
+    const newComment = {
+      user_id: String(user.id), // Assuming you have access to userId from the ContextProvider
+      ticket_id: ticketId,
+      description: description,
+    };
+
+    try {
+      // Send the new comment data to the server
+      await axiosClient.post(`/comments/`, newComment);
+
+      // Reset the form and hide the "Add new comment" section after successful submission
+      e.target.reset();
+      setShowAddComment(false);
+
+      // Fetch updated comments
+      fetchData();
+    } catch (error) {
+      console.error("Error creating comment:", error);
+    }
+  };
+
   return (
     <div>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <h1>Comments for {ticket.name}</h1>
-        <Link className="btn-add" to={'/comments/' + ticketId + '/new'}>Add new comment</Link>
+        <button className="btn-add" onClick={() => setShowAddComment(!showAddComment)}>
+          {showAddComment ? "Cancel" : "Add new comment"}
+        </button>
       </div>
+      {showAddComment && (
+        <div>
+          <form onSubmit={handleAddComment}>
+            <label>
+              Description:
+              <input type="text" name="description" required />
+            </label>
+            <button type="submit">Add Comment</button>
+          </form>
+        </div>
+      )}
       <div className="card animated fadeInDown">
 
         <table>
