@@ -96,6 +96,7 @@ export default function Tickets() {
             <th>Status</th>
             <th>Technician</th>
             <th>Actions</th>
+            <th>Comments</th>
           </tr>
           </thead>
           {loading &&
@@ -125,7 +126,7 @@ export default function Tickets() {
                   &nbsp;
                   {user.role === "admin" && <button className="btn-delete" onClick={ev => onDeleteClick(t)}>Delete</button>}
                 </td>
-                <Link to={'/comments/' + t.id}>Comment</Link>
+                <td><Link className="btn-edit" to={'/comments/' + t.id}>Comment</Link></td>
               </tr>
             ))}
             </tbody>

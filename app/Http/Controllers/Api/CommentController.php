@@ -24,7 +24,7 @@ class CommentController extends Controller
     public function store(StoreCommentRequest $request)
     {
         $data = $request->validated();
-        $comment = COmment::create($data);
+        $comment = Comment::create($data);
 
         return response(new CommentResource($comment) , 201);
     }
@@ -39,7 +39,6 @@ class CommentController extends Controller
         if ($comments->isEmpty()) {
             return response()->json(['message' => 'No comments found for the given ticket_id'], 404);
         }
-
         return CommentResource::collection($comments);
     }
 

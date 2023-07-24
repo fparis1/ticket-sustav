@@ -80,4 +80,5 @@ class UserController extends Controller
 
         return response("", 204);
     }
+
 }

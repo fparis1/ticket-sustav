@@ -21,6 +21,8 @@ class CommentResource extends JsonResource
             'id' => $this->id,
             'user_id' => $this->user_id,
             'ticket_id' => $this->ticket_id,
+            'description' => $this->description,
+            'created_at' => $this->created_at,
         ];
     }
 }
