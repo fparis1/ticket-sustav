@@ -56,25 +56,20 @@ export default function Comments() {
 
   const handleAddComment = async (e) => {
     e.preventDefault();
-    // Get the comment description from the form
     const description = e.target.elements.description.value;
 
-    // Create a new comment object with the required data
     const newComment = {
-      user_id: String(user.id), // Assuming you have access to userId from the ContextProvider
+      user_id: String(user.id),
       ticket_id: ticketId,
       description: description,
     };
 
     try {
-      // Send the new comment data to the server
       await axiosClient.post(`/comments/`, newComment);
 
-      // Reset the form and hide the "Add new comment" section after successful submission
       e.target.reset();
       setShowAddComment(false);
 
-      // Fetch updated comments
       fetchData();
     } catch (error) {
       console.error("Error creating comment:", error);
