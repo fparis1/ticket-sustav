@@ -12,6 +12,7 @@ import ClientForm from "./views/ClientForm.jsx";
 import Clients from "./views/Clients.jsx";
 import Technicians from "./views/Technicians.jsx";
 import Comments from "./views/Comments.jsx";
+import Subtasks from "./views/Subtasks.jsx";
 
 const router = createBrowserRouter(
   
@@ -63,6 +64,10 @@ const router = createBrowserRouter(
       {
         path: '/comments/:ticketId',
         element: <Comments key="commentShow"/>
+      },
+      {
+        path: 'subtasks/:ticketId',
+        element: <Subtasks key="subtaskShow"/>
       }
     ]
   },

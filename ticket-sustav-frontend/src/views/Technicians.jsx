@@ -80,10 +80,8 @@ export default function Technicians() {
 
   const handleSortChange = (option) => {
     if (option === currentSortOption) {
-      // If the same option is clicked again, toggle the sort direction
       toggleSortDirection();
     } else {
-      // If a different option is clicked, set the sort option and default to ascending order
       setCurrentSortOption(option);
       setCurrentSortDirection('asc');
     }

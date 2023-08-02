@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\TicketController;
 use App\Http\Controllers\Api\ClientController;
 use App\Http\Controllers\Api\CommentController;
 use App\Http\Controllers\Api\TechnicianController;
+use App\Http\Controllers\Api\SubtaskController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -31,6 +32,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('/clients', ClientController::class);
     Route::apiResource('/comments', CommentController::class);
     Route::apiResource('/technicians', TechnicianController::class);
+    Route::apiResource('/subtasks', SubtaskController::class);
 });
 
 Route::post('/signup', [AuthController::class, 'signup']);

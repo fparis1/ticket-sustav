@@ -44,7 +44,6 @@ export default function TicketForm() {
       })
       .catch((error) => {
         console.error("Error fetching clients: ", error);
-        // Handle error if necessary
       });
   };
 

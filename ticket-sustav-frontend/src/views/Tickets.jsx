@@ -28,7 +28,6 @@ export default function Tickets() {
         setTechnicians(techniciansData);
       })
       .catch(() => {
-        // Handle error if needed
       });
   };
 
@@ -86,10 +85,8 @@ export default function Tickets() {
 
   const handleSortChange = (option) => {
     if (option === currentSortOption) {
-      // If the same option is clicked again, toggle the sort direction
       toggleSortDirection();
     } else {
-      // If a different option is clicked, set the sort option and default to ascending order
       setCurrentSortOption(option);
       setCurrentSortDirection('asc');
     }
@@ -132,8 +129,9 @@ export default function Tickets() {
             {renderSortButton('name', 'Name')}
             {renderSortButton('description', 'Description')}
             {renderSortButton('status', 'Status')}
-            {renderSortButton('technician_id', 'Technician')}
+            {renderSortButton('technician_id', 'Technician(s)')}
             <th>Actions</th>
+            <th>Subtasks</th>
             <th>Comments</th>
           </tr>
           </thead>
@@ -154,7 +152,14 @@ export default function Tickets() {
                 <td>{t.name}</td>
                 <td>{t.description}</td>
                 <td>{t.status}</td>
-                <td>{technicians[t.technician_id]?.name || "-"}</td>
+                <td>
+                  {t.technician_id.map((techId) => (
+                    <span key={techId}>
+                      {technicians[techId]?.name || "-"}
+                      <br />
+                    </span>
+                  ))}
+                </td>
                 <td>
                   <Link className="btn-edit" id="show" to={'/tickets/' + t.id + '/' + t.id}>Show</Link>
                   &nbsp;
@@ -164,6 +169,7 @@ export default function Tickets() {
                   &nbsp;
                   {user.role === "admin" && <button className="btn-delete" onClick={ev => onDeleteClick(t)}>Delete</button>}
                 </td>
+                <td><Link className="btn-edit" id="subtask" to={'/subtasks/' + t.id}>Subtasks</Link></td>
                 <td><Link className="btn-edit" id="comment" to={'/comments/' + t.id}>Comment</Link></td>
               </tr>
             ))}

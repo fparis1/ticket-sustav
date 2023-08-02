@@ -79,7 +79,7 @@ export default function Comments() {
   return (
     <div>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <h1>Comments for {ticket.name}</h1>
+        <h1>Comments for ticket <u>{ticket.name}</u></h1>
         <button className={showAddComment ? "btn-delete" : "btn-add"} onClick={() => setShowAddComment(!showAddComment)}>
           {showAddComment ? "Cancel" : "Add new comment"}
         </button>
@@ -119,7 +119,6 @@ export default function Comments() {
             {comments.length === 0 && <p>No comments</p>}
             {comments.map(comment => (
               <tr key={comment.id}>
-                {/*console.log(comment)*/}
                 <td>{findUserById(comment.user_id)?.name}</td>
                 <td>{comment.description}</td>
                 <td>{formatTimestamp(comment.created_at)}</td>

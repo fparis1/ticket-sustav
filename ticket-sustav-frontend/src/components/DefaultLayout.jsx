@@ -12,6 +12,8 @@ export default function DefaultLayout() {
   const onLogout = ev => {
     ev.preventDefault()
 
+    //calls setToken function in ContextProvider with null value
+
     axiosClient.post('/logout')
       .then(() => {
         setUser({})

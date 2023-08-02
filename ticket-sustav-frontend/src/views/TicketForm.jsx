@@ -3,6 +3,7 @@ import {useEffect, useState} from "react";
 import axiosClient from "../axios-client.js";
 import {useStateContext} from "../context/ContextProvider.jsx";
 import Modal from "react-modal";
+import Select from 'react-select';
 import NewClientForm from "./NewClientForm";
 
 export default function TicketForm() {
@@ -14,7 +15,7 @@ export default function TicketForm() {
     description: '',
     status: '',
     client_id: '',
-    technician_id: '',
+    technician_id: [],
   })
 
   const [clients, setClients] = useState([]);
@@ -23,32 +24,30 @@ export default function TicketForm() {
   const [loading, setLoading] = useState(false)
   const {user, setNotification} = useStateContext();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedTechnicians, setSelectedTechnicians] = useState([]);
 
   const toggleClientForm = () => {
     setIsModalOpen(!isModalOpen);
   };
 
- // Function to fetch all clients
  const fetchAllClients = () => {
-  const allClients = []; // Initialize an array to store all clients
+  const allClients = []; 
 
-  // Recursive function to fetch clients from each page
   const fetchClientsByPage = (page) => {
     axiosClient
       .get("/clients", {
         params: {
-          page, // Pass the current page as a query parameter
+          page, 
         },
       })
       .then(({ data }) => {
         const { data: clients, meta } = data;
-        allClients.push(...clients); // Add the fetched clients to the array
+        allClients.push(...clients); 
 
-        // Check if there are more pages and recursively fetch them if needed
         if (meta.current_page < meta.last_page) {
           fetchClientsByPage(meta.current_page + 1);
         } else {
-          setClients(allClients); // Set the complete array of clients once all pages are fetched
+          setClients(allClients);
         }
       })
       .catch((error) => {
@@ -56,30 +55,27 @@ export default function TicketForm() {
       });
   };
 
-  // Start fetching clients from the first page
   fetchClientsByPage(1);
 };
 
 const fetchAllTechnicians = () => {
-  const allTechnicians = []; // Initialize an array to store all technicians
+  const allTechnicians = []; 
 
-  // Recursive function to fetch technicians from each page
   const fetchTechniciansByPage = (page) => {
     axiosClient
       .get("/users", {
         params: {
-          page, // Pass the current page as a query parameter
+          page, 
         },
       })
       .then(({ data }) => {
         const { data: technicians, meta } = data;
-        allTechnicians.push(...technicians); // Add the fetched technicians to the array
+        allTechnicians.push(...technicians); 
 
-        // Check if there are more pages and recursively fetch them if needed
         if (meta.current_page < meta.last_page) {
           fetchTechniciansByPage(meta.current_page + 1);
         } else {
-          setTechnicians(allTechnicians); // Set the complete array of technicians once all pages are fetched
+          setTechnicians(allTechnicians);
         }
       })
       .catch((error) => {
@@ -87,7 +83,6 @@ const fetchAllTechnicians = () => {
       });
   };
 
-  // Start fetching technicians from the first page
   fetchTechniciansByPage(1);
   };
 
@@ -96,6 +91,7 @@ const fetchAllTechnicians = () => {
       setLoading(true)
       axiosClient.get(`/tickets/${id}`)
         .then(({data}) => {
+          //debugger;
           setLoading(false)
           setTicket(data)
         })
@@ -133,6 +129,15 @@ const fetchAllTechnicians = () => {
         })
     }
   }
+
+  const technicianOptions = technicians.map((technician) => ({
+    value: technician.id,
+    label: technician.name,
+  }));
+  
+  // Function to check if a technician is selected based on their ID
+  const isTechnicianSelected = (technicianId) =>
+    ticket.technician_id.includes(technicianId);
 
   const handleNewClientCreate = () => {
     fetchAllClients();
@@ -172,10 +177,8 @@ const fetchAllTechnicians = () => {
               value={ticket.status}
               onChange={ev => {
                 const selectedStatus = ev.target.value;
-                // If the selected status is "open", set the technician_id to ''
-                // If the selected status is "taken", reset the technician_id to an empty value (show the technician select element)
                 if (selectedStatus === 'open') {
-                  setTicket({ ...ticket, status: selectedStatus, technician_id: '-' });
+                  setTicket({ ...ticket, status: selectedStatus, technician_id: ['-'] });
                 } else if (selectedStatus === 'taken') {
                   if (user.role === 'admin') {
                     setTicket({ ...ticket, status: selectedStatus, technician_id: '' });
@@ -221,19 +224,23 @@ const fetchAllTechnicians = () => {
                 </option>
               ))}
             </select>
-            {ticket.status !== 'open' && ticket.status !== '' && user.role === "admin" && <p>Technician name:</p>}
-            {ticket.status !== 'open' && ticket.status !== '' && user.role === "admin" && ( // Only show the technician select element when the status is not "open"
-              <select
-                value={ticket.technician_id}
-                onChange={ev => setTicket({ ...ticket, technician_id: ev.target.value })}
-              >
-                {!ticket.technician_id && <option value="">Select a technician</option>}
-                {technicians.map((technician) => (
-                  <option key={technician.id} value={technician.id}>
-                    {technician.name}
-                  </option>
-                ))}
-              </select>
+            {ticket.status !== 'open' && ticket.status !== '' && user.role === "admin" && (
+              <div>
+                <p>Technicians name:</p>
+                <Select
+                  className="select-container"
+                  isMulti
+                  placeholder="Select technician(s)"
+                  options={technicianOptions}
+                  value={technicianOptions.filter((technician) =>
+                    isTechnicianSelected(technician.value)
+                  )}
+                  onChange={(selectedOptions) => {
+                    const selectedTechnicians = selectedOptions.map((option) => option.value);
+                    setTicket({ ...ticket, technician_id: selectedTechnicians });
+                  }}
+                />
+              </div>
             )}
             <button className="btn">Save</button>
           </form>

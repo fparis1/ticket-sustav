@@ -8,7 +8,6 @@ export default function NewClientForm({ isOpen, onClose, onCreateClient, showTic
     name: "",
     email: "",
     phone: "",
-    // Add any other necessary client data
   });
 
   const handleFormSubmit = (ev) => {
@@ -16,13 +15,12 @@ export default function NewClientForm({ isOpen, onClose, onCreateClient, showTic
     axiosClient
       .post("/clients", formData)
       .then(({ data }) => {
-        onCreateClient(data.data); // Notify the parent component about the newly created client
-        setFormData({ name: "", email: "", phone: "" }); // Reset the form data
-        onClose(); // Close the modal
+        onCreateClient(data.data); 
+        setFormData({ name: "", email: "", phone: "" });
+        onClose();
       })
       .catch((error) => {
         console.error("Error creating a new client: ", error);
-        // Handle error if necessary
       });
   };
 
@@ -71,7 +69,6 @@ export default function NewClientForm({ isOpen, onClose, onCreateClient, showTic
             required
           />
         </div>
-        {/* Add any other necessary client form fields here */}
         <button type="button" onClick={handleFormSubmit}>Create Client</button>
         <button type="button" onClick={onClose}>
           Cancel

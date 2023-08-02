@@ -269,3 +269,28 @@ table > tbody > tr > td {
 #comment {
     background-color: grey;
 }
+#subtask {
+    background-color: yellowgreen;
+}
+
+.select-container {
+    margin-bottom: 10px;
+}
+  
+.select-container .select__multi-value__label {
+background-color: #007bff;
+color: #fff;
+padding: 3px 8px;
+border-radius: 5px;
+margin-right: 5px;
+}
+
+.select-container .select__menu {
+border-radius: 5px;
+box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.select-container .select__option--is-selected {
+background-color: #007bff;
+color: #fff;
+}

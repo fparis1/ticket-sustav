@@ -18,6 +18,7 @@ class TechnicianController extends Controller
      */
     public function index(Request $request)
     {
+        // get values from request and set them on default if they are not defined
         $sortBy = $request->query('sort_by', 'id'); 
         $sortDirection = $request->query('sort_dir', 'asc');
 

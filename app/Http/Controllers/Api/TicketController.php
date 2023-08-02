@@ -46,10 +46,23 @@ class TicketController extends Controller
      */
     public function store(StoreTicketRequest $request)
     {
-        $data = $request->validated();
-        $user = Ticket::create($data);
+       // Convert the array of technician_ids to a comma-separated string
+       $technicianIds = implode(',', $request->input('technician_id', []));
 
-        return response(new TicketResource($user) , 201);
+       // Create a new ticket instance
+       $ticket = new Ticket([
+           'name' => $request->input('name'),
+           'description' => $request->input('description'),
+           'status' => $request->input('status'),
+           'technician_id' => $technicianIds, // Save the concatenated technician IDs
+           'client_id' => $request->input('client_id'),
+       ]);
+
+       // Save the ticket
+       $ticket->save();
+
+       // Return the ticket as a resource
+       return new TicketResource($ticket);
     }
 
     /**
@@ -66,6 +79,12 @@ class TicketController extends Controller
     public function update(UpdateTicketRequest $request, Ticket $ticket)
     {
         $data = $request->validated();
+
+        // Convert the technician_id array to a comma-separated string
+        if (isset($data['technician_id']) && is_array($data['technician_id'])) {
+            $data['technician_id'] = implode(',', $data['technician_id']);
+        }
+
         $ticket->update($data);
 
         return new TicketResource($ticket);
