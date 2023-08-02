@@ -68,9 +68,9 @@ export default function Comments() {
     setStatus(newStatus);
   };
 
-  const updateSubtask = async (subtask, value) => {
+  const updateSubtask = async (subtask, value, techId) => {
     const newSubtask = {
-      technician_id: subtask.technician_id,
+      technician_id: techId,
       ticket_id: subtask.ticket_id,
       description: subtask.description,
       status: value,
@@ -175,8 +175,8 @@ export default function Comments() {
                     <td>{subtask.description}</td>
                     <td>{subtask.status}</td>
                     <td>
-                      {subtask.status === 'todo' && user.role === 'admin' && <button onClick={() => updateSubtask(subtask, 'to do')}>Assing to me</button>}
-                      {subtask.status === 'in progress' && <button onClick={() => updateSubtask(subtask, 'completed')}>Close it</button>}
+                      {subtask.status === 'todo' && user.role === 'tech' && <button onClick={() => updateSubtask(subtask, 'to do', user.id.toString())}>Assing to me</button>}
+                      {subtask.status === 'in progress' && <button onClick={() => updateSubtask(subtask, 'completed', subtask.technician_id)}>Close it</button>}
                     </td>
                   </tr>
                   </tbody>
