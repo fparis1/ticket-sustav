@@ -171,7 +171,7 @@ export default function Comments() {
               <th>Technician</th>
               <th>Description</th>
               <th>Status</th>
-              <th>Actions</th>
+              {user.role === 'tech' && (<th>Actions</th>)}
             </tr>
           </thead>
           {loading &&
@@ -194,8 +194,8 @@ export default function Comments() {
                     <td>{subtask.description}</td>
                     <td>{subtask.status}</td>
                     <td>
-                      {subtask.status === 'todo' && user.role === 'tech' && <button onClick={() => updateSubtask(subtask, 'in progress', user.id.toString())}>Assing to me</button>}
-                      {subtask.status === 'in progress' && subtask.technician_id === user.id.toString() &&<button onClick={() => updateSubtask(subtask, 'completed', subtask.technician_id)}>Close it</button>}
+                      {subtask.status === 'todo' && user.role === 'tech' && <button className="btn-edit" onClick={() => updateSubtask(subtask, 'in progress', user.id.toString())}>Assing to me</button>}
+                      {subtask.status === 'in progress' && subtask.technician_id === user.id.toString() &&<button className="btn-delete" onClick={() => updateSubtask(subtask, 'completed', subtask.technician_id)}>Close it</button>}
                     </td>
                   </tr>
                   </tbody>

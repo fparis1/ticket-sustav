@@ -173,7 +173,7 @@ export default function Tickets() {
                   &nbsp;
                   {user.role === "admin" && <button className="btn-delete" onClick={ev => onDeleteClick(t)}>Delete</button>}
                 </td>
-                <td><Link className="btn-edit" id="subtask" to={'/subtasks/' + t.id}>Subtasks</Link></td>
+                <td><Link className="btn-edit" id="subtask" to={'/subtasks/' + t.id} style={{ pointerEvents: t.status === 'closed' ? 'none' : 'auto' }} disabled={t.status === 'closed'}>Subtasks</Link></td>
                 <td><Link className="btn-edit" id="comment" to={'/comments/' + t.id}>Comment</Link></td>
               </tr>
             ))}
