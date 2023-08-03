@@ -56,10 +56,22 @@ class CommentController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Comment $comment)
+    public function destroy($ticketId)
     {
-        $comment->delete();
+        // Find all comments with the given ticketId
+        $comments = Comment::where('ticket_id', $ticketId)->get();
 
-        return response("", 204);
+        // Check if comments were found for the given ticketId
+        if ($comments->isEmpty()) {
+            return response()->json(['message' => 'No comments found for the given ticket_id'], 404);
+        }
+
+        // Delete each comment
+        foreach ($comments as $comment) {
+            $comment->delete();
+        }
+
+        // Return a success response
+        return response()->json(['message' => 'Comments deleted successfully'], 200);
     }
 }

@@ -13,10 +13,12 @@ export default function Tickets() {
   const [currentSortOption, setCurrentSortOption] = useState('id');
   const [currentSortDirection, setCurrentSortDirection] = useState('asc');
 
+  /*
   useEffect(() => {
     getTickets();
     fetchTechnicians();
   }, [])
+  */
 
   const fetchTechnicians = () => {
     axiosClient.get("/users")
@@ -36,6 +38,7 @@ export default function Tickets() {
       return
     }
     axiosClient.delete(`/tickets/${ticket.id}`)
+    axiosClient.delete(`/comments/${ticket.id}`)
       .then(() => {
         setNotification('Ticket was successfully deleted')
         const ticketsOnCurrentPage = tickets.filter(t => t.id !== ticket.id);
@@ -63,6 +66,7 @@ export default function Tickets() {
 
   useEffect(() => {
     getTickets(currentPage, currentSortOption, currentSortDirection);
+    fetchTechnicians();
   }, [currentPage, currentSortOption, currentSortDirection]);
 
   const goToNextPage = () => {
