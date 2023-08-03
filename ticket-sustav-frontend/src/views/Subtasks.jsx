@@ -2,9 +2,7 @@ import { useEffect, useState } from "react";
 import axiosClient from "../axios-client.js";
 import { Link, useParams } from "react-router-dom";
 import { useStateContext } from "../context/ContextProvider.jsx";
-import { Progress } from 'flowbite-react';
 import ProgressBar from "@ramonak/react-progress-bar";
-//import 'react-progress-bar/dist/react-progress-bar.css';
 
 export default function Comments() {
   const [subtasks, setSubtasks] = useState([]);
@@ -26,7 +24,6 @@ export default function Comments() {
   }, [ticketId]);
 
   useEffect(() => {
-    // Calculate the completed percentage
     const completedTasks = subtasks.filter((subtask) => subtask.status === 'completed');
     setCompletedTasks(completedTasks);
     const totalTasks = subtasks.length;
@@ -42,13 +39,11 @@ export default function Comments() {
     axiosClient.get(`/tickets/${ticketId}`)
   ]);
 
-  // Subtasks request (with error handling)
   let subtasksResponse;
   try {
     subtasksResponse = await axiosClient.get(`/subtasks/${ticketId}/`);
     setSubtasks(subtasksResponse.data.data);
   } catch (subtasksError) {
-    // Handle the case where there are no subtasks
     console.warn("No subtasks found:", subtasksError);
     setSubtasks([]);
   }
