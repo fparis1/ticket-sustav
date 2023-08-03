@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import axiosClient from "../axios-client.js";
 import { Link, useParams } from "react-router-dom";
 import { useStateContext } from "../context/ContextProvider.jsx";
+import { Progress } from 'flowbite-react';
+import ProgressBar from "@ramonak/react-progress-bar";
+//import 'react-progress-bar/dist/react-progress-bar.css';
 
 export default function Comments() {
   const [subtasks, setSubtasks] = useState([]);
@@ -12,6 +15,8 @@ export default function Comments() {
   const [status, setStatus] = useState("");
   const [description, setDescription] = useState("");
   const [technicianId, setTechnicianId] = useState("");
+  const [completedPercentage, setCompletedPercentage] = useState(0);
+  const [completedTasks, setCompletedTasks] = useState(0);
   const { user } = useStateContext();
 
   let { ticketId } = useParams();
@@ -20,23 +25,42 @@ export default function Comments() {
     fetchData();
   }, [ticketId]);
 
+  useEffect(() => {
+    // Calculate the completed percentage
+    const completedTasks = subtasks.filter((subtask) => subtask.status === 'completed');
+    setCompletedTasks(completedTasks);
+    const totalTasks = subtasks.length;
+    const percentage = (completedTasks.length / totalTasks) * 100;
+    setCompletedPercentage(Math.round(percentage));
+  }, [subtasks]);
+
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [subtasksResponse, usersResponse, ticketResponse] = await Promise.all([
-        axiosClient.get(`/subtasks/${ticketId}/`),
-        axiosClient.get(`/users/`),
-        axiosClient.get(`/tickets/${ticketId}`)
-      ]);
-      setSubtasks(subtasksResponse.data.data);
-      setUsers(usersResponse.data.data);
-      setTicket(ticketResponse.data);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [usersResponse, ticketResponse] = await Promise.all([
+    axiosClient.get(`/users/`),
+    axiosClient.get(`/tickets/${ticketId}`)
+  ]);
+
+  // Subtasks request (with error handling)
+  let subtasksResponse;
+  try {
+    subtasksResponse = await axiosClient.get(`/subtasks/${ticketId}/`);
+    setSubtasks(subtasksResponse.data.data);
+  } catch (subtasksError) {
+    // Handle the case where there are no subtasks
+    console.warn("No subtasks found:", subtasksError);
+    setSubtasks([]);
+  }
+  debugger;
+  setUsers(usersResponse.data.data);
+  setTicket(ticketResponse.data);
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  } finally {
+    setLoading(false);
+  }
+  }
 
   const handleFormSubmit = async (event) => {
     event.preventDefault();
@@ -175,15 +199,26 @@ export default function Comments() {
                     <td>{subtask.description}</td>
                     <td>{subtask.status}</td>
                     <td>
-                      {subtask.status === 'todo' && user.role === 'tech' && <button onClick={() => updateSubtask(subtask, 'to do', user.id.toString())}>Assing to me</button>}
-                      {subtask.status === 'in progress' && <button onClick={() => updateSubtask(subtask, 'completed', subtask.technician_id)}>Close it</button>}
+                      {subtask.status === 'todo' && user.role === 'tech' && <button onClick={() => updateSubtask(subtask, 'in progress', user.id.toString())}>Assing to me</button>}
+                      {subtask.status === 'in progress' && subtask.technician_id === user.id.toString() &&<button onClick={() => updateSubtask(subtask, 'completed', subtask.technician_id)}>Close it</button>}
                     </td>
                   </tr>
                   </tbody>
                 );
               })}
+              {!loading && subtasks.length === 0 && (
+                <tbody>
+                  <tr>
+                  <td rowSpan="4"><center>Currently there are no subtasks for this ticket</center></td>
+                  </tr>
+                </tbody>
+              )}
         </table>
       </div>
+      <div className="progress-bar-container">
+          {subtasks.length > 0 && (<ProgressBar completed={completedPercentage} bgColor="green" height="15px"/>)}
+          {subtasks.length > 0 && (<div className="percentage-text">{`${completedTasks.length} out of ${subtasks.length} completed`}</div>)}
+        </div>
     </div>
   );
 }
