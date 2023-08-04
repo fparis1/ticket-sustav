@@ -60,9 +60,9 @@ export default function Comments() {
 
   const handleFormSubmit = async (event) => {
     event.preventDefault();
-
+    debugger;
     const newSubtask = {
-      technician_id : (technicianId !== '' ? technicianId : '-'),
+      technician_id : (technicianId !== '' ? ''+technicianId : '-'),
       ticket_id: ticketId,
       description: description,
       status: status,
@@ -111,6 +111,10 @@ export default function Comments() {
     }
   };
 
+  console.log('users:', users);
+  console.log('technicianId:', technicianId);
+  console.log('ticket.technician_id:', ticket.technician_id);
+
   return (
     <div>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "10px", marginBottom: "10px"}}>
@@ -145,20 +149,20 @@ export default function Comments() {
             {status === 'in progress' && (
               <Form.Group>
                 <Form.Label>Technician:</Form.Label>
-                <Form.Control
-                  as="select"
-                  value={technicianId}
-                  onChange={(e) => setTechnicianId(e.target.value)}
-                >
-                  {technicianId === '' && (<option value="">Select Technician</option>)}
-                  {users
+                <Select
+                  value={{label : users.find((user) => user.id === parseInt(technicianId, 10)) ? users.find((user) => user.id === parseInt(technicianId, 10)).name : "Select Technician", value : users.find((user) => user.id === parseInt(technicianId, 10)) ? users.find((user) => user.id === parseInt(technicianId, 10)).id : '-'}}
+                  onChange={(selectedOption) => setTechnicianId(selectedOption.id)}
+                  options={users
                     .filter((user) => ticket.technician_id?.includes(user.id))
-                    .map((technician) => (
-                      <option key={technician.id} value={technician.id}>
-                        {technician.name}
-                      </option>
-                    ))}
-                </Form.Control>
+                    .map((technician) => ({
+                      label: technician.name,
+                      value: technician.id,
+                      id: technician.id, // Use a separate 'id' property to keep track of the selected option
+                    }))
+                  }
+                  isClearable
+                  placeholder="Select Technician"
+                />
               </Form.Group>
             )}
             <Button className="btn-success" type="submit" style={{marginTop: "20px"}}>Create Subtask</Button>
