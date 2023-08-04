@@ -2,7 +2,8 @@ import {useEffect, useState} from "react";
 import axiosClient from "../axios-client.js";
 import {Link, useNavigate} from "react-router-dom";
 import {useStateContext} from "../context/ContextProvider.jsx";
-import React from 'react';
+//import React from 'react';
+import { Container, Table, Button } from "react-bootstrap";
 
 export default function Technicians() {
   const [technicians, setTechnicians] = useState([]);
@@ -14,10 +15,6 @@ export default function Technicians() {
   const navigate = useNavigate();
   const [currentSortOption, setCurrentSortOption] = useState('id');
   const [currentSortDirection, setCurrentSortDirection] = useState('asc');
-
-  useEffect(() => {
-    getTechnicians();
-  }, [])
 
   useEffect(() => {
     if (user) {
@@ -112,62 +109,62 @@ export default function Technicians() {
   };
 
   return (
-    <div>
-      <div style={{display: 'flex', justifyContent: "space-between", alignItems: "center"}}>
+    <Container style={{marginTop : "10px"}}>
+      <div style={{display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom : "10px"}}>
         <h1>Technicians</h1>
       </div>
       <div className="card animated fadeInDown">
-        <table>
+        <Table striped bordered hover>
           <thead>
-          <tr>
-            {renderSortButton('name', 'Name')}
-            {renderSortButton('email', 'Email')}
-            <th>Actions</th>
-          </tr>
+            <tr>
+              {renderSortButton('name', 'Name')}
+              {renderSortButton('email', 'Email')}
+              <th>Actions</th>
+            </tr>
           </thead>
           {loading &&
             <tbody>
-            <tr>
-              <td colSpan="5" class="text-center">
-                Loading...
-              </td>
-            </tr>
+              <tr>
+                <td colSpan="5" className="text-center">
+                  Loading...
+                </td>
+              </tr>
             </tbody>
           }
           {!loading &&
             <tbody>
-            {technicians.map(u => (
-              <tr key={u.id}>
-                <td>{u.name}</td>
-                <td>{u.email}</td>
-                <td>
-                  <button className="btn-delete" onClick={ev => onDeleteClick(u)}>Delete</button>
-                </td>
-              </tr>
-            ))}
+              {technicians.map(u => (
+                <tr key={u.id}>
+                  <td>{u.name}</td>
+                  <td>{u.email}</td>
+                  <td>
+                    <Button variant="danger" onClick={ev => onDeleteClick(u)}>Delete</Button>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           }
-        </table>
+        </Table>
         {totalPages > 1 &&
-        <div style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
-        <button onClick={goToPreviousPage} disabled={currentPage === 1}>
-          Previous
-        </button>
-        {Array.from({ length: totalPages }, (_, index) => index + 1).map((pageNumber) => (
-          <button
-            key={pageNumber}
-            onClick={() => goToPage(pageNumber)}
-            disabled={currentPage === pageNumber}
-          >
-            {pageNumber}
-          </button>
-        ))}
-        <button onClick={goToNextPage} disabled={currentPage === totalPages}>
-          Next
-        </button>
-      </div>
+          <div style={{ display: "flex", justifyContent: "center", marginTop: "10px", marginBottom: "20px" }}>
+            <Button onClick={goToPreviousPage} disabled={currentPage === 1}>
+              Previous
+            </Button>
+            {Array.from({ length: totalPages }, (_, index) => index + 1).map((pageNumber) => (
+              <Button
+                key={pageNumber}
+                onClick={() => goToPage(pageNumber)}
+                disabled={currentPage === pageNumber}
+              >
+                {pageNumber}
+              </Button>
+            ))}
+            <Button onClick={goToNextPage} disabled={currentPage === totalPages}>
+              Next
+            </Button>
+          </div>
         }
       </div>
-    </div>
+    </Container>
   )
 }

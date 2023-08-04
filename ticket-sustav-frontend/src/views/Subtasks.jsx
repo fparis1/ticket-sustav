@@ -3,6 +3,8 @@ import axiosClient from "../axios-client.js";
 import { Link, useParams } from "react-router-dom";
 import { useStateContext } from "../context/ContextProvider.jsx";
 import ProgressBar from "@ramonak/react-progress-bar";
+import { Table, Form, Button } from "react-bootstrap";
+import Select from "react-select";
 
 export default function Comments() {
   const [subtasks, setSubtasks] = useState([]);
@@ -47,7 +49,6 @@ export default function Comments() {
     console.warn("No subtasks found:", subtasksError);
     setSubtasks([]);
   }
-  debugger;
   setUsers(usersResponse.data.data);
   setTicket(ticketResponse.data);
   } catch (error) {
@@ -112,41 +113,40 @@ export default function Comments() {
 
   return (
     <div>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "10px", marginBottom: "10px"}}>
         <h1>Subtasks for ticket <u>{ticket.name}</u></h1>
-        <button className={showForm ? "btn-delete" : "btn-add"} onClick={() => setShowForm(!showForm)}>
+        <Button className={showForm ? "btn-danger" : "btn-success"} onClick={() => setShowForm(!showForm)}>
           {showForm ? "Cancel" : "Create New Subtask"}
-        </button>
+        </Button>
       </div>
       <div className="card animated fadeInDown">
-      {showForm && (
-          <form onSubmit={handleFormSubmit}>
-            <div>
-              <label htmlFor="status">Status:</label>
-              <select
-                id="status"
-                value={status}
-                onChange={(e) => setStatusWithReset(e.target.value)}
-              >
-                {status === '' && (<option value="">Select Status</option>)}
-                <option value="todo">TO DO</option>
-                <option value="in progress">In Progress</option>
-              </select>
-            </div>
-            <div>
-              <label htmlFor="description">Description:</label>
-              <input
+        {showForm && (
+          <Form onSubmit={handleFormSubmit} className="form-container">
+            <Form.Group>
+              <Form.Label>Status:</Form.Label>
+              <Select
+                value={{ label: status === '' ? "Select status" : status, value: status }}
+                onChange={(selectedOption) => setStatusWithReset(selectedOption.value)}
+                options={[
+                  { label: "todo", value: "todo" },
+                  { label: "in progress", value: "in progress" },
+                ]}
+                isClearable
+              />
+            </Form.Group>
+            <Form.Group>
+              <Form.Label>Description:</Form.Label>
+              <Form.Control
                 type="text"
-                id="description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
               />
-            </div>
-            {status === 'in progress' && ( // Display technician only when status is "in progress"
-              <div>
-                <label htmlFor="technician">Technician:</label>
-                <select
-                  id="technician"
+            </Form.Group>
+            {status === 'in progress' && (
+              <Form.Group>
+                <Form.Label>Technician:</Form.Label>
+                <Form.Control
+                  as="select"
                   value={technicianId}
                   onChange={(e) => setTechnicianId(e.target.value)}
                 >
@@ -158,14 +158,14 @@ export default function Comments() {
                         {technician.name}
                       </option>
                     ))}
-                </select>
-              </div>
+                </Form.Control>
+              </Form.Group>
             )}
-            <button className="btn-add" type="submit">Create Subtask</button>
-          </form>
+            <Button className="btn-success" type="submit" style={{marginTop: "20px"}}>Create Subtask</Button>
+          </Form>
         )}
         {showForm && (<br/>)}
-        <table>
+        <Table>
           <thead>
             <tr>
               <th>Technician</th>
@@ -177,7 +177,7 @@ export default function Comments() {
           {loading &&
             <tbody>
             <tr>
-              <td colSpan="5" class="text-center">
+              <td colSpan="5" className="text-center">
                 Loading...
               </td>
             </tr>
@@ -194,8 +194,8 @@ export default function Comments() {
                     <td>{subtask.description}</td>
                     <td>{subtask.status}</td>
                     <td>
-                      {subtask.status === 'todo' && user.role === 'tech' && <button className="btn-edit" onClick={() => updateSubtask(subtask, 'in progress', user.id.toString())}>Assing to me</button>}
-                      {subtask.status === 'in progress' && subtask.technician_id === user.id.toString() &&<button className="btn-delete" onClick={() => updateSubtask(subtask, 'completed', subtask.technician_id)}>Close it</button>}
+                      {subtask.status === 'todo' && user.role === 'tech' && <Button className="btn-edit" onClick={() => updateSubtask(subtask, 'in progress', user.id.toString())}>Assign to me</Button>}
+                      {subtask.status === 'in progress' && subtask.technician_id === user.id.toString() &&<Button className="btn-delete" onClick={() => updateSubtask(subtask, 'completed', subtask.technician_id)}>Close it</Button>}
                     </td>
                   </tr>
                   </tbody>
@@ -208,12 +208,12 @@ export default function Comments() {
                   </tr>
                 </tbody>
               )}
-        </table>
+        </Table>
       </div>
       <div className="progress-bar-container">
           {subtasks.length > 0 && (<ProgressBar completed={completedPercentage} bgColor="green" height="15px"/>)}
           {subtasks.length > 0 && (<div className="percentage-text">{`${completedTasks.length} out of ${subtasks.length} completed`}</div>)}
         </div>
     </div>
-  );
+  )
 }

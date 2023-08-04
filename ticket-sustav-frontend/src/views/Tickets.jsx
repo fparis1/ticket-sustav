@@ -2,6 +2,7 @@ import {useEffect, useState} from "react";
 import axiosClient from "../axios-client.js";
 import {Link} from "react-router-dom";
 import {useStateContext} from "../context/ContextProvider.jsx";
+import { Container, Table, Button } from "react-bootstrap";
 
 export default function Tickets() {
   const [tickets, setTickets] = useState([]);
@@ -12,13 +13,6 @@ export default function Tickets() {
   const [technicians, setTechnicians] = useState({});
   const [currentSortOption, setCurrentSortOption] = useState('id');
   const [currentSortDirection, setCurrentSortDirection] = useState('asc');
-
-  /*
-  useEffect(() => {
-    getTickets();
-    fetchTechnicians();
-  }, [])
-  */
 
   const fetchTechnicians = () => {
     axiosClient.get("/users")
@@ -121,85 +115,100 @@ export default function Tickets() {
   };
 
   return (
-    <div>
-      <div style={{display: 'flex', justifyContent: "space-between", alignItems: "center"}}>
+    <Container style={{marginTop : "10px"}}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom : "10px"}}>
         <h1>Tickets</h1>
-        {user.role === "admin" && <Link className="btn-add" to="/tickets/new">Add new ticket</Link>}
+        {user.role === "admin" && <Link className="btn btn-primary" to="/tickets/new">Add new ticket</Link>}
       </div>
       <div className="card animated fadeInDown">
-        <table>
+        <Table responsive striped bordered hover>
           <thead>
-          <tr>
-            {renderSortButton('name', 'Name')}
-            {renderSortButton('description', 'Description')}
-            {renderSortButton('status', 'Status')}
-            {renderSortButton('technician_id', 'Technician(s)')}
-            <th>Actions</th>
-            <th>Subtasks</th>
-            <th>Comments</th>
-          </tr>
+            <tr>
+              {renderSortButton('name', 'Name')}
+              {renderSortButton('description', 'Description')}
+              {renderSortButton('status', 'Status')}
+              {renderSortButton('technician_id', 'Technician(s)')}
+              <th>Actions</th>
+              <th>Subtasks</th>
+              <th>Comments</th>
+            </tr>
           </thead>
           {loading &&
             <tbody>
-            <tr>
-              <td colSpan="5" class="text-center">
-                Loading...
-              </td>
-            </tr>
+              <tr>
+                <td colSpan="5" className="text-center">
+                  Loading...
+                </td>
+              </tr>
             </tbody>
           }
           {!loading &&
             <tbody>
-            {tickets.length === 0 && <p>No tickets</p>}
-            {tickets.map(t => (
-              <tr key={t.id}>
-                <td>{t.name}</td>
-                <td>{t.description}</td>
-                <td>{t.status}</td>
-                <td>
-                  {t.technician_id.map((techId) => (
-                    <span key={techId}>
-                      {technicians[techId]?.name || "-"}
-                      <br />
-                    </span>
-                  ))}
-                </td>
-                <td>
-                  <Link className="btn-edit" id="show" to={'/tickets/' + t.id + '/' + t.id}>Show</Link>
-                  &nbsp;
-                  {t.status !== 'closed' &&
-                  <Link className="btn-edit" to={'/tickets/' + t.id}>Edit</Link>
-                  }
-                  &nbsp;
-                  {user.role === "admin" && <button className="btn-delete" onClick={ev => onDeleteClick(t)}>Delete</button>}
-                </td>
-                <td><Link className="btn-edit" id="subtask" to={'/subtasks/' + t.id} style={{ pointerEvents: t.status === 'closed' ? 'none' : 'auto' }} disabled={t.status === 'closed'}>Subtasks</Link></td>
-                <td><Link className="btn-edit" id="comment" to={'/comments/' + t.id}>Comment</Link></td>
-              </tr>
-            ))}
+              {tickets.length === 0 && <p>No tickets</p>}
+              {tickets.map(t => (
+                <tr key={t.id}>
+                  <td>{t.name}</td>
+                  <td>{t.description}</td>
+                  <td>{t.status}</td>
+                  <td>
+                    {t.technician_id.map((techId) => (
+                      <span key={techId}>
+                        {technicians[techId]?.name || "-"}
+                        <br />
+                      </span>
+                    ))}
+                  </td>
+                  <td>
+                    <Link style={{marginBottom : "2px", marginTop : "2px"}} className="btn btn-primary" id="show" to={'/tickets/' + t.id + '/' + t.id}>Show</Link>
+                    &nbsp;
+                    {t.status !== 'closed' &&
+                      <Link style={{marginBottom : "2px", marginTop : "2px"}} className="btn btn-warning" to={'/tickets/' + t.id}>Edit</Link>
+                    }
+                    &nbsp;
+                    {user.role === "admin" &&
+                      <Button style={{marginBottom : "2px", marginTop : "2px"}} className="btn btn-danger" onClick={ev => onDeleteClick(t)}>Delete</Button>
+                    }
+                  </td>
+                  <td>
+                    <Link
+                      className="btn btn-success"
+                      id="subtask"
+                      to={'/subtasks/' + t.id}
+                      style={{ pointerEvents: t.status === 'closed' ? 'none' : 'auto', marginBottom : "2px", marginTop : "2px"}}
+                      disabled={t.status === 'closed'}
+                    >
+                      Subtasks
+                    </Link>
+                  </td>
+                  <td>
+                    <Link style={{marginBottom : "2px", marginTop : "2px"}} className="btn btn-info" id="comment" to={'/comments/' + t.id}>Comment</Link>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           }
-        </table>
+        </Table>
         {totalPages > 1 &&
-        <div style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
-        <button onClick={goToPreviousPage} disabled={currentPage === 1}>
-          Previous
-        </button>
-        {Array.from({ length: totalPages }, (_, index) => index + 1).map((pageNumber) => (
-          <button
-            key={pageNumber}
-            onClick={() => goToPage(pageNumber)}
-            disabled={currentPage === pageNumber}
-          >
-            {pageNumber}
-          </button>
-        ))}
-        <button onClick={goToNextPage} disabled={currentPage === totalPages}>
-          Next
-        </button>
-      </div>
+          <div style={{ display: "flex", justifyContent: "center", marginTop: "10px", marginBottom: "20px" }}>
+            <Button onClick={goToPreviousPage} disabled={currentPage === 1}>
+              Previous
+            </Button>
+            {Array.from({ length: totalPages }, (_, index) => index + 1).map((pageNumber) => (
+              <Button
+                key={pageNumber}
+                onClick={() => goToPage(pageNumber)}
+                disabled={currentPage === pageNumber}
+              >
+                {pageNumber}
+              </Button>
+            ))}
+            <Button onClick={goToNextPage} disabled={currentPage === totalPages}>
+              Next
+            </Button>
+          </div>
         }
       </div>
-    </div>
+      <br/>
+    </Container>
   )
 }

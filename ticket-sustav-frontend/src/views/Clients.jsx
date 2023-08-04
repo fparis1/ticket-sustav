@@ -2,6 +2,7 @@ import {useEffect, useState} from "react";
 import axiosClient from "../axios-client.js";
 import {Link, useNavigate} from "react-router-dom";
 import {useStateContext} from "../context/ContextProvider.jsx";
+import { Table, Button } from 'react-bootstrap';
 
 export default function Clients() {
   const [clients, setClients] = useState([]);
@@ -13,10 +14,6 @@ export default function Clients() {
   const navigate = useNavigate();
   const [currentSortOption, setCurrentSortOption] = useState('id');
   const [currentSortDirection, setCurrentSortDirection] = useState('asc');
-
-  useEffect(() => {
-    getClients();
-  }, [])
 
   useEffect(() => {
     if (user) {
@@ -111,13 +108,13 @@ export default function Clients() {
   };
 
   return (
-    <div>
-      <div style={{display: 'flex', justifyContent: "space-between", alignItems: "center"}}>
+    <div style={{marginTop : "10px"}}>
+      <div style={{ display: 'flex', justifyContent: "space-between", alignItems: "center", marginBottom: "10px"}}>
         <h1>Clients</h1>
-        <Link className="btn-add" to="/clients/new">Add new client</Link>
+        <Link className="btn btn-primary" to="/clients/new">Add new client</Link>
       </div>
       <div className="card animated fadeInDown">
-        <table>
+        <Table striped bordered responsive>
           <thead>
             <tr>
               {renderSortButton('name', 'Name')}
@@ -128,48 +125,44 @@ export default function Clients() {
           </thead>
           {loading &&
             <tbody>
-            <tr>
-              <td colSpan="5" class="text-center">
-                Loading...
-              </td>
-            </tr>
+              <tr>
+                <td colSpan="5" class="text-center">
+                  Loading...
+                </td>
+              </tr>
             </tbody>
           }
           {!loading &&
             <tbody>
-            {clients.map(c => (
-              <tr key={c.id}>
-                <td>{c.name}</td>
-                <td>{c.email}</td>
-                <td>{c.phone}</td>
-                <td>
-                  <Link className="btn-edit" to={'/clients/' + c.id}>Edit</Link>
-                  &nbsp;
-                  <button className="btn-delete" onClick={ev => onDeleteClick(c)}>Delete</button>
-                </td>
-              </tr>
-            ))}
+              {clients.map(c => (
+                <tr key={c.id}>
+                  <td>{c.name}</td>
+                  <td>{c.email}</td>
+                  <td>{c.phone}</td>
+                  <td>
+                    <Link style={{marginBottom : "2px", marginTop : "2px"}} className="btn btn-warning" to={'/clients/' + c.id}>Edit</Link>
+                    &nbsp;
+                    <Button style={{marginBottom : "2px", marginTop : "2px"}} variant="danger" onClick={ev => onDeleteClick(c)}>Delete</Button> {/* Use React Bootstrap Button */}
+                  </td>
+                </tr>
+              ))}
             </tbody>
           }
-        </table>
+        </Table>
         {totalPages > 1 &&
-        <div style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
-          <button onClick={goToPreviousPage} disabled={currentPage === 1}>
-            Previous
-          </button>
-          {Array.from({ length: totalPages }, (_, index) => index + 1).map((pageNumber) => (
-            <button
-              key={pageNumber}
-              onClick={() => goToPage(pageNumber)}
-              disabled={currentPage === pageNumber}
-            >
-              {pageNumber}
-            </button>
-          ))}
-          <button onClick={goToNextPage} disabled={currentPage === totalPages}>
-            Next
-          </button>
-        </div>
+          <div style={{ display: "flex", justifyContent: "center", marginTop: "10px", marginBottom: "20px" }}>
+            <Button onClick={goToPreviousPage} disabled={currentPage === 1}>Previous</Button> {/* Use React Bootstrap Button */}
+            {Array.from({ length: totalPages }, (_, index) => index + 1).map((pageNumber) => (
+              <Button
+                key={pageNumber}
+                onClick={() => goToPage(pageNumber)}
+                disabled={currentPage === pageNumber}
+              >
+                {pageNumber}
+              </Button>
+            ))}
+            <Button onClick={goToNextPage} disabled={currentPage === totalPages}>Next</Button> {/* Use React Bootstrap Button */}
+          </div>
         }
       </div>
     </div>

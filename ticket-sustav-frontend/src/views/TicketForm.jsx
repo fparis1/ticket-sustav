@@ -1,14 +1,14 @@
-import {useNavigate, useParams} from "react-router-dom";
-import {useEffect, useState} from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
 import axiosClient from "../axios-client.js";
-import {useStateContext} from "../context/ContextProvider.jsx";
-import Modal from "react-modal";
+import { useStateContext } from "../context/ContextProvider.jsx";
 import Select from 'react-select';
 import NewClientForm from "./NewClientForm";
+import { Form, Button, Container, Row, Col } from 'react-bootstrap';
 
 export default function TicketForm() {
   const navigate = useNavigate();
-  let {id} = useParams();
+  let { id } = useParams();
   const [ticket, setTicket] = useState({
     id: '',
     name: '',
@@ -16,13 +16,13 @@ export default function TicketForm() {
     status: '',
     client_id: '',
     technician_id: [],
-  })
+  });
 
   const [clients, setClients] = useState([]);
   const [technicians, setTechnicians] = useState([]);
   const [errors, setErrors] = useState(null)
   const [loading, setLoading] = useState(false)
-  const {user, setNotification} = useStateContext();
+  const { user, setNotification } = useStateContext();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTechnicians, setSelectedTechnicians] = useState([]);
 
@@ -30,68 +30,67 @@ export default function TicketForm() {
     setIsModalOpen(!isModalOpen);
   };
 
- const fetchAllClients = () => {
-  const allClients = []; 
+  const fetchAllClients = () => {
+    const allClients = [];
 
-  const fetchClientsByPage = (page) => {
-    axiosClient
-      .get("/clients", {
-        params: {
-          page, 
-        },
-      })
-      .then(({ data }) => {
-        const { data: clients, meta } = data;
-        allClients.push(...clients); 
+    const fetchClientsByPage = (page) => {
+      axiosClient
+        .get("/clients", {
+          params: {
+            page,
+          },
+        })
+        .then(({ data }) => {
+          const { data: clients, meta } = data;
+          allClients.push(...clients);
 
-        if (meta.current_page < meta.last_page) {
-          fetchClientsByPage(meta.current_page + 1);
-        } else {
-          setClients(allClients);
-        }
-      })
-      .catch((error) => {
-        console.error("Error fetching clients: ", error);
-      });
+          if (meta.current_page < meta.last_page) {
+            fetchClientsByPage(meta.current_page + 1);
+          } else {
+            setClients(allClients);
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching clients: ", error);
+        });
+    };
+
+    fetchClientsByPage(1);
   };
 
-  fetchClientsByPage(1);
-};
+  const fetchAllTechnicians = () => {
+    const allTechnicians = [];
 
-const fetchAllTechnicians = () => {
-  const allTechnicians = []; 
+    const fetchTechniciansByPage = (page) => {
+      axiosClient
+        .get("/users", {
+          params: {
+            page,
+          },
+        })
+        .then(({ data }) => {
+          const { data: technicians, meta } = data;
+          allTechnicians.push(...technicians);
 
-  const fetchTechniciansByPage = (page) => {
-    axiosClient
-      .get("/users", {
-        params: {
-          page, 
-        },
-      })
-      .then(({ data }) => {
-        const { data: technicians, meta } = data;
-        allTechnicians.push(...technicians); 
+          if (meta.current_page < meta.last_page) {
+            fetchTechniciansByPage(meta.current_page + 1);
+          } else {
+            setTechnicians(allTechnicians);
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching technicians: ", error);
+        });
+    };
 
-        if (meta.current_page < meta.last_page) {
-          fetchTechniciansByPage(meta.current_page + 1);
-        } else {
-          setTechnicians(allTechnicians);
-        }
-      })
-      .catch((error) => {
-        console.error("Error fetching technicians: ", error);
-      });
-  };
-
-  fetchTechniciansByPage(1);
+    fetchTechniciansByPage(1);
   };
 
   if (id) {
     useEffect(() => {
       setLoading(true)
       axiosClient.get(`/tickets/${id}`)
-        .then(({data}) => {
-          //debugger;
+        .then(({ data }) => {
           setLoading(false)
           setTicket(data)
         })
@@ -130,12 +129,22 @@ const fetchAllTechnicians = () => {
     }
   }
 
+  const statusOptions = [
+    { value: 'open', label: 'open' },
+    { value: 'taken', label: 'taken' },
+    ...(ticket.id ? [{ value: 'closed', label: 'closed' }] : []),
+  ];
+
+  const clientOptions = clients.map((client) => ({
+    value: client.id.toString(),
+    label: client.name,
+  }));
+
   const technicianOptions = technicians.map((technician) => ({
     value: technician.id,
     label: technician.name,
   }));
-  
-  // Function to check if a technician is selected based on their ID
+
   const isTechnicianSelected = (technicianId) =>
     ticket.technician_id.includes(technicianId);
 
@@ -150,7 +159,7 @@ const fetchAllTechnicians = () => {
   }, []);
 
   return (
-    <>
+    <Container className="form-container">
       {ticket.id && <h1>Update Ticket: {ticket.name}</h1>}
       {!ticket.id && <h1>New Ticket</h1>}
       <div className="card animated fadeInDown">
@@ -167,85 +176,121 @@ const fetchAllTechnicians = () => {
           </div>
         }
         {!loading && (
-          <form onSubmit={onSubmit}>
-            Ticket name:
-            <input value={ticket.name} onChange={ev => setTicket({...ticket, name: ev.target.value})} placeholder="Name" disabled={user.role === "tech"}/>
-            Ticket description:
-            <input value={ticket.description} onChange={ev => setTicket({...ticket, description: ev.target.value})} placeholder="Description" disabled={user.role === "tech"}/>
-            Ticket status:
-            <select
-              value={ticket.status}
-              onChange={ev => {
-                const selectedStatus = ev.target.value;
-                if (selectedStatus === 'open') {
-                  setTicket({ ...ticket, status: selectedStatus, technician_id: ['-'] });
-                } else if (selectedStatus === 'taken') {
-                  if (user.role === 'admin') {
-                    setTicket({ ...ticket, status: selectedStatus, technician_id: '' });
-                  }
-                  else {
-                    setTicket({ ...ticket, status: selectedStatus, technician_id: '' + user.id });
-                  }
-                } else {
-                  setTicket({ ...ticket, status: selectedStatus });
-                }
-              }}
-            >
-              {!ticket.status && <option value="">Select a status</option>}
-              <option key="open" value="open">
-                open
-              </option>
-              <option key="taken" value="taken">
-                taken
-              </option>
-              {ticket.id && (
-                <option key="closed" value="closed">
-                  closed
-                </option>
+          <Form onSubmit={onSubmit}>
+            <Row>
+              <Col>
+                <Form.Group controlId="ticketName">
+                  <Form.Label>Ticket name:</Form.Label>
+                  <Form.Control
+                    value={ticket.name}
+                    onChange={ev => setTicket({ ...ticket, name: ev.target.value })}
+                    placeholder="Name"
+                    disabled={user.role === "tech"}
+                  />
+                </Form.Group>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <Form.Group controlId="ticketDescription">
+                  <Form.Label>Ticket description:</Form.Label>
+                  <Form.Control
+                    value={ticket.description}
+                    onChange={ev => setTicket({ ...ticket, description: ev.target.value })}
+                    placeholder="Description"
+                    disabled={user.role === "tech"}
+                  />
+                </Form.Group>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <Form.Group controlId="ticketStatus">
+                  <Form.Label>Ticket status:</Form.Label>
+                  <Select
+                    value={statusOptions.find(option => option.value === ticket.status)}
+                    options={statusOptions}
+                    onChange={selectedOption => {
+                      const selectedStatus = selectedOption.value;
+                      if (selectedStatus === 'open') {
+                        setTicket({ ...ticket, status: selectedStatus, technician_id: ['-'] });
+                      } else if (selectedStatus === 'taken') {
+                        if (user.role === 'admin') {
+                          setTicket({ ...ticket, status: selectedStatus, technician_id: '' });
+                        } else {
+                          setTicket({ ...ticket, status: selectedStatus, technician_id: '' + user.id });
+                        }
+                      } else {
+                        setTicket({ ...ticket, status: selectedStatus });
+                      }
+                    }}
+                  />
+                </Form.Group>
+              </Col>
+            </Row>
+            <Row>
+              {user.role === "admin" && (
+                <Col md={6}>
+                  <Button type="button" onClick={toggleClientForm} className="mb-3">
+                    Create New Client
+                  </Button>
+                </Col>
               )}
-            </select>
-            {user.role === "admin" && 
-            <button type="button" onClick={toggleClientForm}>
-              Create New Client
-            </button>}
-            {user.role === "admin" && <br/>}
-            {user.role === "admin" && <br/>}
-            <NewClientForm
-              isOpen={isModalOpen}
-              onClose={toggleClientForm}
-              onCreateClient={handleNewClientCreate}
-            />
-            Client name:
-            <select value={ticket.client_id} onChange={ev => setTicket({...ticket, client_id: ev.target.value})} disabled={user.role === "tech"}>
-              {!ticket.client_id && <option value="">Select a client</option>}
-              {clients.map((client) => (
-                <option key={client.id} value={client.id}>
-                  {client.name}
-                </option>
-              ))}
-            </select>
-            {ticket.status !== 'open' && ticket.status !== '' && user.role === "admin" && (
-              <div>
-                <p>Technicians name:</p>
-                <Select
-                  className="select-container"
-                  isMulti
-                  placeholder="Select technician(s)"
-                  options={technicianOptions}
-                  value={technicianOptions.filter((technician) =>
-                    isTechnicianSelected(technician.value)
-                  )}
-                  onChange={(selectedOptions) => {
-                    const selectedTechnicians = selectedOptions.map((option) => option.value);
-                    setTicket({ ...ticket, technician_id: selectedTechnicians });
-                  }}
+            </Row>
+            <Row>
+              <Col>
+                <NewClientForm
+                  isOpen={isModalOpen}
+                  onClose={toggleClientForm}
+                  onCreateClient={handleNewClientCreate}
                 />
-              </div>
-            )}
-            <button className="btn">Save</button>
-          </form>
+                <Form.Group controlId="ticketClient">
+                  <Form.Label>Client name:</Form.Label>
+                  <Select
+                    value={clientOptions.find((option) => option.value === ticket.client_id)}
+                    options={clientOptions}
+                    onChange={(selectedOption) =>
+                      setTicket({ ...ticket, client_id: '' + selectedOption.value })
+                    }
+                    isDisabled={user.role === 'tech'}
+                    placeholder={!ticket.client_id ? 'Select a client' : undefined}
+                  />
+                </Form.Group>
+              </Col>
+            </Row>
+            <Row>
+              {ticket.status !== 'open' && ticket.status !== '' && user.role === "admin" && (
+                <Col>
+                  <Form.Group controlId="ticketTechnician">
+                    <Form.Label>Technicians:</Form.Label>
+                    <Select
+                      className="select-container"
+                      isMulti
+                      placeholder="Select technician(s)"
+                      options={technicianOptions}
+                      value={technicianOptions.filter((technician) =>
+                        isTechnicianSelected(technician.value)
+                      )}
+                      onChange={(selectedOptions) => {
+                        const selectedTechnicians = selectedOptions.map((option) => option.value);
+                        setTicket({ ...ticket, technician_id: selectedTechnicians });
+                      }}
+                    />
+                  </Form.Group>
+                </Col>
+              )}
+            </Row>
+            <Row>
+              <Col>
+                <Button className="btn btn-success" type="submit">
+                  {ticket.id && <>Save</>}
+                  {!ticket.id && <>Create</>}
+                </Button>
+              </Col>
+            </Row>
+          </Form>
         )}
       </div>
-    </>
+    </Container>
   )
 }

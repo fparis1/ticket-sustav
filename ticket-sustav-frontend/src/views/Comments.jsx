@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axiosClient from "../axios-client.js";
 import { Link, useParams } from "react-router-dom";
 import { useStateContext } from "../context/ContextProvider.jsx";
+import { Table, Button, Form } from 'react-bootstrap';
 
 export default function Comments() {
   const [comments, setComments] = useState([]);
@@ -78,26 +79,25 @@ export default function Comments() {
 
   return (
     <div>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" , marginTop: "10px", marginBottom: "10px"}}>
         <h1>Comments for ticket <u>{ticket.name}</u></h1>
-        <button className={showAddComment ? "btn-delete" : "btn-add"} onClick={() => setShowAddComment(!showAddComment)}>
+        <Button className={showAddComment ? "btn-danger" : "btn-success"} onClick={() => setShowAddComment(!showAddComment)}>
           {showAddComment ? "Cancel" : "Add new comment"}
-        </button>
+        </Button>
       </div>
       {showAddComment && (
         <div>
-          <form onSubmit={handleAddComment}>
-            <label>
-              Description:
-              <input type="text" name="description" required />
-            </label>
-            <button type="submit" className="btn-add">Add Comment</button>
-          </form>
+          <Form onSubmit={handleAddComment}>
+            <Form.Label>Description:</Form.Label>
+            <Form.Control type="text" name="description" required />
+            <br/>
+            <Button type="submit" className="btn-success">Add Comment</Button>
+          </Form>
+          <br/>
         </div>
       )}
       <div className="card animated fadeInDown">
-
-        <table>
+        <Table striped bordered responsive>
           <thead>
             <tr>
               <th>User</th>
@@ -105,28 +105,28 @@ export default function Comments() {
               <th>Created at</th>
             </tr>
           </thead>
-        {loading &&
+          {loading && (
             <tbody>
-            <tr>
-              <td colSpan="5" class="text-center">
-                Loading...
-              </td>
-            </tr>
-            </tbody>
-          }
-        {!loading &&
-            <tbody>
-            {comments.length === 0 && <p>No comments</p>}
-            {comments.map(comment => (
-              <tr key={comment.id}>
-                <td>{findUserById(comment.user_id)?.name}</td>
-                <td>{comment.description}</td>
-                <td>{formatTimestamp(comment.created_at)}</td>
+              <tr>
+                <td colSpan="5" className="text-center">
+                  Loading...
+                </td>
               </tr>
-            ))}
             </tbody>
-          }
-        </table>
+          )}
+          {!loading && (
+            <tbody>
+              {comments.length === 0 && <p>No comments</p>}
+              {comments.map(comment => (
+                <tr key={comment.id}>
+                  <td>{findUserById(comment.user_id)?.name}</td>
+                  <td>{comment.description}</td>
+                  <td>{formatTimestamp(comment.created_at)}</td>
+                </tr>
+              ))}
+            </tbody>
+          )}
+        </Table>
       </div>
     </div>
   );
