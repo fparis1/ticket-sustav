@@ -8,16 +8,15 @@ export default function DefaultLayout() {
   const { user, token, setUser, setToken, notification } = useStateContext();
   const [navbarCollapsed, setNavbarCollapsed] = useState(false);
 
-  if (!token) {
-    return <Navigate to="/login" />;
-  }
-
   const onLogout = (ev) => {
     ev.preventDefault();
 
     axiosClient.post("/logout").then(() => {
       setUser({});
       setToken(null);
+    })
+    .catch((error) => {
+      console.error("Logout failed:", error);
     });
   };
 
@@ -27,6 +26,10 @@ export default function DefaultLayout() {
       document.body.style.backgroundColor = "lightblue";
     });
   }, []);
+
+  if (!token) {
+    return <Navigate to="/login" />;
+  }
 
   const toggleNavbar = () => {
     setNavbarCollapsed(navbarCollapsed ? !navbarCollapsed : navbarCollapsed);

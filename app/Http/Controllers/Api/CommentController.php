@@ -61,7 +61,7 @@ class CommentController extends Controller
         $comments = Comment::where('ticket_id', $ticketId)->get();
 
         if ($comments->isEmpty()) {
-            return response()->json(['message' => 'No comments found for the given ticket_id'], 404);
+            return response()->json(['message' => 'No comments found for the given ticket_id'], 204);
         }
 
         foreach ($comments as $comment) {

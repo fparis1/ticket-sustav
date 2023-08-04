@@ -18,6 +18,8 @@ export default function Comments() {
   const [completedPercentage, setCompletedPercentage] = useState(0);
   const [completedTasks, setCompletedTasks] = useState(0);
   const { user } = useStateContext();
+  
+  const technicianFromQuery = users.find((user) => user.id === parseInt(technicianId, 10));
 
   let { ticketId } = useParams();
 
@@ -111,17 +113,14 @@ export default function Comments() {
     }
   };
 
-  console.log('users:', users);
-  console.log('technicianId:', technicianId);
-  console.log('ticket.technician_id:', ticket.technician_id);
-
   return (
     <div>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "10px", marginBottom: "10px"}}>
         <h1>Subtasks for ticket <u>{ticket.name}</u></h1>
+        {user.role === 'admin' &&
         <Button className={showForm ? "btn-danger" : "btn-success"} onClick={() => setShowForm(!showForm)}>
-          {showForm ? "Cancel" : "Create New Subtask"}
-        </Button>
+        {showForm ? "Cancel" : "Create New Subtask"}
+      </Button>}
       </div>
       <div className="card animated fadeInDown">
         {showForm && (
@@ -150,14 +149,14 @@ export default function Comments() {
               <Form.Group>
                 <Form.Label>Technician:</Form.Label>
                 <Select
-                  value={{label : users.find((user) => user.id === parseInt(technicianId, 10)) ? users.find((user) => user.id === parseInt(technicianId, 10)).name : "Select Technician", value : users.find((user) => user.id === parseInt(technicianId, 10)) ? users.find((user) => user.id === parseInt(technicianId, 10)).id : '-'}}
+                  value={{label : technicianFromQuery ? technicianFromQuery.name : "Select Technician", value : technicianFromQuery ? technicianFromQuery.id : '-'}}
                   onChange={(selectedOption) => setTechnicianId(selectedOption.id)}
                   options={users
                     .filter((user) => ticket.technician_id?.includes(user.id))
                     .map((technician) => ({
                       label: technician.name,
                       value: technician.id,
-                      id: technician.id, // Use a separate 'id' property to keep track of the selected option
+                      id: technician.id,
                     }))
                   }
                   isClearable
@@ -169,52 +168,63 @@ export default function Comments() {
           </Form>
         )}
         {showForm && (<br/>)}
-        <Table>
+        <Table striped bordered responsive>
           <thead>
             <tr>
-              <th>Technician</th>
+              <th>User</th>
               <th>Description</th>
               <th>Status</th>
-              {user.role === 'tech' && (<th>Actions</th>)}
+              {user.role === 'tech' && <th>Actions</th>}
             </tr>
           </thead>
-          {loading &&
+          {loading && (
             <tbody>
-            <tr>
-              <td colSpan="5" className="text-center">
-                Loading...
-              </td>
-            </tr>
+              <tr>
+                <td colSpan="4" className="text-center">
+                  Loading...
+                </td>
+              </tr>
             </tbody>
-          }
-            {!loading &&
-              subtasks.map((subtask) => {
-                const technician = users.find((user) => user.id === parseInt(subtask.technician_id, 10));
+          )}
+          {!loading && (
+            <tbody>
+              {subtasks.length === 0 && (
+                <tr>
+                  <td colSpan="3">
+                    <center>No subtasks</center>
+                  </td>
+                </tr>
+              )}
+              {subtasks.map(subtask => {
+                const technician = users.find(user => user.id === parseInt(subtask.technician_id, 10));
 
                 return (
-                  <tbody key={subtask.id}>
                   <tr key={subtask.id}>
                     <td>{technician ? technician.name : "-"}</td>
                     <td>{subtask.description}</td>
                     <td>{subtask.status}</td>
-                    <td>
-                      {subtask.status === 'todo' && user.role === 'tech' && <Button className="btn-edit" onClick={() => updateSubtask(subtask, 'in progress', user.id.toString())}>Assign to me</Button>}
-                      {subtask.status === 'in progress' && subtask.technician_id === user.id.toString() &&<Button className="btn-delete" onClick={() => updateSubtask(subtask, 'completed', subtask.technician_id)}>Close it</Button>}
-                    </td>
+                    {user.role === 'tech' && (
+                      <td>
+                        {subtask.status === 'todo' && user.role === 'tech' && (
+                          <Button className="btn-success" onClick={() => updateSubtask(subtask, 'in progress', user.id.toString())}>
+                            Assign to me
+                          </Button>
+                        )}
+                        {subtask.status === 'in progress' && subtask.technician_id === user.id.toString() && (
+                          <Button className="btn-danger" onClick={() => updateSubtask(subtask, 'completed', subtask.technician_id)}>
+                            Close it
+                          </Button>
+                        )}
+                      </td>
+                    )}
                   </tr>
-                  </tbody>
                 );
               })}
-              {!loading && subtasks.length === 0 && (
-                <tbody>
-                  <tr>
-                  <td rowSpan="4"><center>Currently there are no subtasks for this ticket</center></td>
-                  </tr>
-                </tbody>
-              )}
+            </tbody>
+          )}
         </Table>
       </div>
-      <div className="progress-bar-container">
+      <div className="progress-bar-container" style={{marginTop: "20px"}}>
           {subtasks.length > 0 && (<ProgressBar completed={completedPercentage} bgColor="green" height="15px"/>)}
           {subtasks.length > 0 && (<div className="percentage-text">{`${completedTasks.length} out of ${subtasks.length} completed`}</div>)}
         </div>

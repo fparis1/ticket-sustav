@@ -142,7 +142,7 @@ export default function Clients() {
                   <td>
                     <Link style={{marginBottom : "2px", marginTop : "2px"}} className="btn btn-warning" to={'/clients/' + c.id}>Edit</Link>
                     &nbsp;
-                    <Button style={{marginBottom : "2px", marginTop : "2px"}} variant="danger" onClick={ev => onDeleteClick(c)}>Delete</Button> {/* Use React Bootstrap Button */}
+                    <Button style={{marginBottom : "2px", marginTop : "2px"}} variant="danger" onClick={ev => onDeleteClick(c)}>Delete</Button>
                   </td>
                 </tr>
               ))}
@@ -151,7 +151,7 @@ export default function Clients() {
         </Table>
         {totalPages > 1 &&
           <div style={{ display: "flex", justifyContent: "center", marginTop: "10px", marginBottom: "20px" }}>
-            <Button onClick={goToPreviousPage} disabled={currentPage === 1}>Previous</Button> {/* Use React Bootstrap Button */}
+            <Button onClick={goToPreviousPage} disabled={currentPage === 1}>Previous</Button>
             {Array.from({ length: totalPages }, (_, index) => index + 1).map((pageNumber) => (
               <Button
                 key={pageNumber}
@@ -161,7 +161,7 @@ export default function Clients() {
                 {pageNumber}
               </Button>
             ))}
-            <Button onClick={goToNextPage} disabled={currentPage === totalPages}>Next</Button> {/* Use React Bootstrap Button */}
+            <Button onClick={goToNextPage} disabled={currentPage === totalPages}>Next</Button>
           </div>
         }
       </div>

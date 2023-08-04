@@ -33,6 +33,7 @@ export default function Tickets() {
     }
     axiosClient.delete(`/tickets/${ticket.id}`)
     axiosClient.delete(`/comments/${ticket.id}`)
+    axiosClient.delete(`/subtasks/${ticket.id}`)
       .then(() => {
         setNotification('Ticket was successfully deleted')
         const ticketsOnCurrentPage = tickets.filter(t => t.id !== ticket.id);

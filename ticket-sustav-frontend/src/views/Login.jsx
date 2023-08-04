@@ -3,6 +3,8 @@ import axiosClient from "../axios-client.js";
 import {createRef} from "react";
 import {useStateContext} from "../context/ContextProvider.jsx";
 import { useState } from "react";
+import { Form, Button } from 'react-bootstrap';
+import "../index.css";
 
 export default function Login() {
   const emailRef = createRef()
@@ -31,22 +33,24 @@ export default function Login() {
   }
 
   return (
-    <div className="login-signup-form animated fadeInDown">
+    <div className="login-signup-form animated fadeInDown" style={{borderColor : "black", borderStyle : "ridge", backgroundColor : "white"}}>
       <div className="form">
-        <form onSubmit={onSubmit}>
-          <h1 className="title">Login into your account</h1>
+      <Form onSubmit={onSubmit} className="login-signup-container">
+        <h2>Login into your account</h2>
 
-          {message &&
-            <div className="alert">
-              <p>{message}</p>
-            </div>
-          }
+        {message && <div className="alert alert-danger"><p>{message}</p></div>}
 
-          <input ref={emailRef} type="email" placeholder="Email"/>
-          <input ref={passwordRef} type="password" placeholder="Password"/>
-          <button className="btn btn-block">Login</button>
-          <p className="message">Not registered? <Link to="/signup">Create an account</Link></p>
-        </form>
+        <Form.Group controlId="formEmail" style={{marginTop : "10px"}}>
+          <Form.Control ref={emailRef} type="email" placeholder="Email" />
+        </Form.Group>
+        <Form.Group controlId="formPassword" style={{marginTop : "10px"}}>
+          <Form.Control ref={passwordRef} type="password" placeholder="Password" />
+        </Form.Group>
+
+        <Button className="btn btn-primary" type="submit" style={{marginTop : "10px"}}>Login</Button>
+
+        <p className="message">Not registered? <Link to="/signup" className="btn btn-primary" style={{padding : "3px"}}>Create an account</Link></p>
+      </Form>
       </div>
     </div>
   )

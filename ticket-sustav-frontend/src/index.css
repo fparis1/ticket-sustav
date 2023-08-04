@@ -22,3 +22,31 @@ body {
 .form-container {
     padding: 10px; /* Adjust the value as needed */
 }
+
+.login-signup-container {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px;
+}
+
+.login-signup-container Form.Group,
+.login-signup-container h2,
+.login-signup-container .alert,
+.login-signup-container Form.Control
+.login-signup-container Button,
+.login-signup-container .message {
+  margin: 10px;
+}
+
+.form-field {
+    margin-bottom: 10px; /* You can adjust this value to increase or decrease the spacing */
+}
+#guestLayout {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}

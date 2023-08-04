@@ -169,7 +169,7 @@ export default function TicketForm() {
           </div>
         )}
         {errors &&
-          <div className="alert">
+          <div class="alert alert-danger" role="alert">
             {Object.keys(errors).map(key => (
               <p key={key}>{errors[key][0]}</p>
             ))}
@@ -218,7 +218,7 @@ export default function TicketForm() {
                         if (user.role === 'admin') {
                           setTicket({ ...ticket, status: selectedStatus, technician_id: '' });
                         } else {
-                          setTicket({ ...ticket, status: selectedStatus, technician_id: '' + user.id });
+                          setTicket({ ...ticket, status: selectedStatus, technician_id: [user.id] });
                         }
                       } else {
                         setTicket({ ...ticket, status: selectedStatus });

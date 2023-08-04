@@ -2,6 +2,8 @@ import { Link } from "react-router-dom";
 import { createRef, useState } from "react";
 import axiosClient from "../axios-client.js";
 import { useStateContext } from "../context/ContextProvider.jsx";
+import { Form, Button } from "react-bootstrap";
+import "../index.css";
 
 export default function Signup() {
   const nameRef = createRef();
@@ -15,13 +17,14 @@ export default function Signup() {
 
   const onSubmit = (ev) => {
     ev.preventDefault();
-    debugger;
+    const isAdminChecked = adminRoleRef.current.checked;
+    const isTechChecked = techRoleRef.current.checked;
     const payload = {
       name: nameRef.current.value,
       email: emailRef.current.value,
       password: passwordRef.current.value,
       password_confirmation: passwordConfirmationRef.current.value,
-      role: adminRoleRef.current.checked ? "admin" : "tech",
+      role: isAdminChecked ? "admin" : isTechChecked ? "tech" : "",
     };
     axiosClient
       .post("/signup", payload)
@@ -39,53 +42,67 @@ export default function Signup() {
 
   return (
     <div className="login-signup-form animated fadeInDown">
-      <div className="form">
-        <form onSubmit={onSubmit}>
+      <div
+        className="login-signup-container"
+        style={{
+          borderColor: "black",
+          borderStyle: "ridge",
+          backgroundColor: "white",
+          padding: "20px",
+        }}
+      >
+        <Form onSubmit={onSubmit} className="login-signup-container">
           <h1 className="title">Signup</h1>
           {errors && (
-            <div className="alert">
+            <div className="alert alert-danger">
               {Object.keys(errors).map((key) => (
                 <p key={key}>{errors[key][0]}</p>
               ))}
             </div>
           )}
-          <input ref={nameRef} type="text" placeholder="Full Name" />
-          <input ref={emailRef} type="email" placeholder="Email Address" />
-          <input ref={passwordRef} type="password" placeholder="Password" />
-          <input
-            ref={passwordConfirmationRef}
-            type="password"
-            placeholder="Repeat Password"
-          />
-          <div>
-            <div id="floatLeft">
-              <input
-                ref={adminRoleRef}
-                type="radio"
-                name="role"
-                value="admin"
-              />
-            </div>
-            <div id="floatRight">Admin</div>
-            <br />
+          <Form.Group>
+            <Form.Control ref={nameRef} type="text" placeholder="Full Name" className="form-field" />
+          </Form.Group>
+          <Form.Group>
+            <Form.Control ref={emailRef} type="email" placeholder="Email Address" className="form-field" />
+          </Form.Group>
+          <Form.Group>
+            <Form.Control ref={passwordRef} type="password" placeholder="Password" className="form-field" />
+          </Form.Group>
+          <Form.Group>
+            <Form.Control
+              ref={passwordConfirmationRef}
+              type="password"
+              placeholder="Repeat Password"
+              className="form-field"
+            />
+          </Form.Group>
+          <div className="radio-container">
+            <Form.Check
+              ref={adminRoleRef}
+              type="radio"
+              name="role"
+              value="admin"
+              label="Admin"
+              className="form-field"
+            />
+            <Form.Check
+              ref={techRoleRef}
+              type="radio"
+              name="role"
+              value="tech"
+              label="Technician"
+              className="form-field"
+            />
           </div>
-          <div>
-            <div id="floatLeft">
-              <input
-                ref={techRoleRef}
-                type="radio"
-                name="role"
-                value="tech"
-              />
-            </div>
-            <div id="floatRight">Technician</div>
-          </div>
-          <button className="btn btn-block">Signup</button>
+          <Button className="btn btn-block btn-primary" type="submit">
+            Signup
+          </Button>
           <p className="message">
-            Already registered? <Link to="/login">Sign In</Link>
+            Already registered? <Link to="/login" className="btn btn-primary" style={{padding : "3px"}}>Sign In</Link>
           </p>
-        </form>
+        </Form>
       </div>
     </div>
-  );
+  )
 }

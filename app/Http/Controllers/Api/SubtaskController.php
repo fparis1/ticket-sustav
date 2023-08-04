@@ -56,8 +56,18 @@ class SubtaskController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Subtask $subtask)
+    public function destroy($ticketId)
     {
-        //
+        $subtasks = Subtask::where('ticket_id', $ticketId)->get();
+
+        if ($subtasks->isEmpty()) {
+            return response()->json(['message' => 'No subtasks found for the given ticket_id'], 204);
+        }
+
+        foreach ($subtasks as $subtask) {
+            $subtask->delete();
+        }
+
+        return response()->json(['message' => 'Subtasks deleted successfully'], 200);
     }
 }

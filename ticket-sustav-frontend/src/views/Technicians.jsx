@@ -2,7 +2,6 @@ import {useEffect, useState} from "react";
 import axiosClient from "../axios-client.js";
 import {Link, useNavigate} from "react-router-dom";
 import {useStateContext} from "../context/ContextProvider.jsx";
-//import React from 'react';
 import { Container, Table, Button } from "react-bootstrap";
 
 export default function Technicians() {
