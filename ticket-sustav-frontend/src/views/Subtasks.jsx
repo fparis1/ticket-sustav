@@ -17,9 +17,10 @@ export default function Comments() {
   const [technicianId, setTechnicianId] = useState("");
   const [completedPercentage, setCompletedPercentage] = useState(0);
   const [completedTasks, setCompletedTasks] = useState(0);
-  const { user } = useStateContext();
+  const {user, setNotification} = useStateContext();
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [errors, setErrors] = useState(null)
   
   const technicianFromQuery = users.find((user) => user.id === parseInt(technicianId, 10));
 
@@ -79,13 +80,14 @@ export default function Comments() {
 
   const handleFormSubmit = async (event) => {
     event.preventDefault();
-
+    /*
     if (status === 'in progress' && technicianId === '') {
       setErrorMessage("Technician is required for 'in progress' status.");
       setShowErrorModal(true);
       return;
     }
-
+    */
+   debugger;
     const newSubtask = {
       technician_id : (technicianId !== '' ? ''+technicianId : '-'),
       ticket_id: ticketId,
@@ -101,8 +103,17 @@ export default function Comments() {
       setStatus("");
       setDescription("");
       setTechnicianId("");
-    } catch (error) {
-      console.error("Error creating subtask:", error);
+      setErrors(null);
+    } catch (err) {
+      debugger;
+      console.error("Error creating subtask:", err);
+      const response = err.response;
+      if (response && response.status === 422) {
+        setErrors(response.data.errors)
+      }
+      if (response && response.status === 424) {
+        setErrors(response.data.errors)
+      }
     }
   };
 
@@ -151,6 +162,14 @@ export default function Comments() {
       </Button>}
       </div>
       <div className="card animated fadeInDown">
+      {errors &&
+            <div class="alert alert-danger" role="alert">
+              {Object.keys(errors).map(key => (
+                <p key={key}>{errors[key][0]}</p>
+              ))}
+            </div>
+      }
+        {/*}
         <Modal show={showErrorModal} onHide={handleCloseErrorModal}>
           <Modal.Header closeButton>
             <Modal.Title>Error</Modal.Title>
@@ -162,6 +181,7 @@ export default function Comments() {
             </Button>
           </Modal.Footer>
         </Modal>
+        {*/}
         {showForm && (
           <Form onSubmit={handleFormSubmit} className="form-container">
             <Form.Group>

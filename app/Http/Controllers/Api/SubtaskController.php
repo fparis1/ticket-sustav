@@ -24,6 +24,18 @@ class SubtaskController extends Controller
     public function store(StoreSubtaskRequest $request)
     {
         $data = $request->validated();
+
+        if ($request->status === "in progress" && $request->technician_id === "-") {
+            $error = [
+                'errors' => [
+                    'description' => ['Technician should be selected.'],
+                ],
+                'message' => 'Technician should be selected.',
+            ];
+        
+            return response()->json($error, 424);
+        }
+
         $subtask = Subtask::create($data);
 
         return response(new SubtaskResource($subtask) , 201);
