@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axiosClient from "../axios-client.js";
-import Modal from "react-modal";
+import { Modal, Form, Button } from "react-bootstrap";
 
 export default function NewClientForm({ isOpen, onClose, onCreateClient, showTicketButton }) {
   const [formData, setFormData] = useState({
@@ -33,52 +33,51 @@ export default function NewClientForm({ isOpen, onClose, onCreateClient, showTic
   };
 
   return (
-    <Modal isOpen={isOpen} onRequestClose={onClose} contentLabel="New Client Form">
-      <h2>Create New Client</h2>
-      <form>
-        <div>
-          <label htmlFor="name">Name:</label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            value={formData.name}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
-        <div>
-          <label htmlFor="email">Email:</label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            value={formData.email}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
-        <div>
-          <label htmlFor="phone">Phone:</label>
-          <input
-            type="phone"
-            id="phone"
-            name="phone"
-            value={formData.phone}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
-        <button type="button" onClick={handleFormSubmit}>Create Client</button>
-        <button type="button" onClick={onClose}>
-          Cancel
-        </button>
-        {showTicketButton && (
-          <button type="button" onClick={() => console.log("Save Ticket")}>
-            Save Ticket
-          </button>
-        )}
-      </form>
+    <Modal show={isOpen} onHide={onClose} contentLabel="New Client Form">
+      <Modal.Header closeButton>
+        <Modal.Title>Create New Client</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Form>
+          <Form.Group controlId="name">
+            <Form.Label>Name:</Form.Label>
+            <Form.Control
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleInputChange}
+              required
+            />
+          </Form.Group>
+          <Form.Group controlId="email">
+            <Form.Label>Email:</Form.Label>
+            <Form.Control
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleInputChange}
+              required
+            />
+          </Form.Group>
+          <Form.Group controlId="phone">
+            <Form.Label>Phone:</Form.Label>
+            <Form.Control
+              type="phone"
+              name="phone"
+              value={formData.phone}
+              onChange={handleInputChange}
+              required
+            />
+          </Form.Group>
+          <Button variant="success" type="button" onClick={handleFormSubmit} style={{marginRight: "10px", marginTop: "10px"}}>Create Client</Button>
+          <Button variant="danger" onClick={onClose} style={{marginTop: "10px"}}>Cancel</Button>
+          {showTicketButton && (
+            <Button variant="info" onClick={() => console.log("Save Ticket")}>
+              Save Ticket
+            </Button>
+          )}
+        </Form>
+      </Modal.Body>
     </Modal>
   );
 }

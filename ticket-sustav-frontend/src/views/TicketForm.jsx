@@ -63,7 +63,7 @@ export default function TicketForm() {
 
     const fetchTechniciansByPage = (page) => {
       axiosClient
-        .get("/users", {
+        .get("/technicians", {
           params: {
             page,
           },

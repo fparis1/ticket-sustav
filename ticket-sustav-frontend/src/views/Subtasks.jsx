@@ -3,7 +3,7 @@ import axiosClient from "../axios-client.js";
 import { Link, useParams } from "react-router-dom";
 import { useStateContext } from "../context/ContextProvider.jsx";
 import ProgressBar from "@ramonak/react-progress-bar";
-import { Table, Form, Button } from "react-bootstrap";
+import { Table, Form, Button, Modal } from "react-bootstrap";
 import Select from "react-select";
 
 export default function Comments() {
@@ -18,6 +18,8 @@ export default function Comments() {
   const [completedPercentage, setCompletedPercentage] = useState(0);
   const [completedTasks, setCompletedTasks] = useState(0);
   const { user } = useStateContext();
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   
   const technicianFromQuery = users.find((user) => user.id === parseInt(technicianId, 10));
 
@@ -38,31 +40,52 @@ export default function Comments() {
   const fetchData = async () => {
     setLoading(true);
     try {
-  const [usersResponse, ticketResponse] = await Promise.all([
-    axiosClient.get(`/users/`),
-    axiosClient.get(`/tickets/${ticketId}`)
-  ]);
-
-  let subtasksResponse;
-  try {
-    subtasksResponse = await axiosClient.get(`/subtasks/${ticketId}/`);
-    setSubtasks(subtasksResponse.data.data);
-  } catch (subtasksError) {
-    console.warn("No subtasks found:", subtasksError);
-    setSubtasks([]);
-  }
-  setUsers(usersResponse.data.data);
-  setTicket(ticketResponse.data);
-  } catch (error) {
-    console.error("Error fetching data:", error);
-  } finally {
-    setLoading(false);
-  }
-  }
+      const usersResponse = await axiosClient.get(`/users/`, { params: { page: 1, limit: 100 } });
+      const allTechnicians = usersResponse.data.data;
+  
+      if (usersResponse.data.meta.current_page < usersResponse.data.meta.last_page) {
+        const totalPages = usersResponse.data.meta.last_page;
+        const additionalRequests = [];
+  
+        for (let page = 2; page <= totalPages; page++) {
+          additionalRequests.push(axiosClient.get(`/users/`, { params: { page, limit: 100 } }));
+        }
+  
+        const responses = await Promise.all(additionalRequests);
+        responses.forEach((response) => {
+          allTechnicians.push(...response.data.data);
+        });
+      }
+  
+      setUsers(allTechnicians);
+  
+      const ticketResponse = await axiosClient.get(`/tickets/${ticketId}`);
+      setTicket(ticketResponse.data);
+  
+      let subtasksResponse;
+      try {
+        subtasksResponse = await axiosClient.get(`/subtasks/${ticketId}/`);
+        setSubtasks(subtasksResponse.data.data);
+      } catch (subtasksError) {
+        console.warn("No subtasks found:", subtasksError);
+        setSubtasks([]);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleFormSubmit = async (event) => {
     event.preventDefault();
-    debugger;
+
+    if (status === 'in progress' && technicianId === '') {
+      setErrorMessage("Technician is required for 'in progress' status.");
+      setShowErrorModal(true);
+      return;
+    }
+
     const newSubtask = {
       technician_id : (technicianId !== '' ? ''+technicianId : '-'),
       ticket_id: ticketId,
@@ -113,6 +136,11 @@ export default function Comments() {
     }
   };
 
+  const handleCloseErrorModal = () => {
+    setShowErrorModal(false);
+    setErrorMessage("");
+  };
+
   return (
     <div>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "10px", marginBottom: "10px"}}>
@@ -123,6 +151,17 @@ export default function Comments() {
       </Button>}
       </div>
       <div className="card animated fadeInDown">
+        <Modal show={showErrorModal} onHide={handleCloseErrorModal}>
+          <Modal.Header closeButton>
+            <Modal.Title>Error</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>{errorMessage}</Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleCloseErrorModal}>
+              Close
+            </Button>
+          </Modal.Footer>
+        </Modal>
         {showForm && (
           <Form onSubmit={handleFormSubmit} className="form-container">
             <Form.Group>

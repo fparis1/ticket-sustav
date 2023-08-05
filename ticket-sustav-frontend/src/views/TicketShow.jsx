@@ -2,6 +2,8 @@ import {useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import axiosClient from "../axios-client.js";
 import {useStateContext} from "../context/ContextProvider.jsx";
+import { Form, FormGroup, FormControl, Button, Card, Spinner, Alert, Dropdown } from "react-bootstrap";
+import "../index.css";
 
 export default function TicketForm() {
   let {id} = useParams();
@@ -17,9 +19,7 @@ export default function TicketForm() {
   const [client, setClient] = useState({
 
   })
-  const [technician, setTechnician] = useState({
-
-  })
+  const [technician, setTechnician] = useState({})
   const [errors, setErrors] = useState(null)
   const [loading, setLoading] = useState(false)
 
@@ -35,15 +35,31 @@ export default function TicketForm() {
       });
   };
 
-  const fetchTechnician = (tech_id) => {
-    axiosClient
-      .get(`/users/${tech_id}`) 
-      .then(({ data }) => {
-        setTechnician(data);
-        console.log(data);
+  const fetchTechnician = (techIds) => {
+    if (!techIds || techIds.length === 0) {
+      // No technician IDs to fetch, return an empty array
+      setTechnician([]);
+      return;
+    }
+  
+    const fetchTechniciansPromises = techIds.map((tech_id) => {
+      return axiosClient
+        .get(`/users/${tech_id}`)
+        .then(({ data }) => data)
+        .catch((error) => {
+          console.error("Error fetching technician with ID ", tech_id, ": ", error);
+          return null;
+        });
+    });
+  
+    Promise.all(fetchTechniciansPromises)
+      .then((technicians) => {
+        // Filter out any null values (failed requests)
+        const filteredTechnicians = technicians.filter((tech) => tech !== null);
+        setTechnician(filteredTechnicians);
       })
       .catch((error) => {
-        console.error("Error fetching clients: ", error);
+        console.error("Error fetching technicians: ", error);
       });
   };
 
@@ -56,43 +72,64 @@ export default function TicketForm() {
           setTicket(data)
           debugger;
           if (data.technician_id !== '-') {
-            fetchTechnician(data.technician_id);
+            fetchTechnician(Array.isArray(data.technician_id) ? data.technician_id : [data.technician_id]);
+          } else {
+            setTechnician([]); // No technicians to fetch, set an empty array
           }
           fetchClient(data.client_id);
         })
         .catch(() => {
           setLoading(false)
         })
-    }, [])
+    }, [id])
   }
 
   return (
     <>
       <h1>Ticket info</h1>
-      <div className="card animated fadeInDown">
+      <Card className="animated fadeInDown">
         {loading && (
           <div className="text-center">
+            <Spinner animation="border" />
             Loading...
           </div>
         )}
-        {errors &&
+        {errors && (
           <div className="alert">
-            {Object.keys(errors).map(key => (
-              <p key={key}>{errors[key][0]}</p>
-            ))}
+            <Alert variant="danger">
+              {Object.keys(errors).map((key) => (
+                <p key={key}>{errors[key][0]}</p>
+              ))}
+            </Alert>
           </div>
-        }
-            Ticket name:
-            <input value={ticket.name} />
-            Ticket description:
-            <input value={ticket.description} />
-            Ticket status:
-            <input value={ticket.status} />
-            Client name:
-            <input value={client.name} />
-            {technician.name && <p>Technician name:</p>}
-            {technician.name && <input value={technician.name}/>}
-      </div>
+        )}
+        <Form className="show-container">
+          <FormGroup className="show-container">
+            <Form.Label>Ticket name:</Form.Label>
+            <FormControl value={ticket.name} readOnly />
+          </FormGroup>
+          <FormGroup className="show-container">
+            <Form.Label>Ticket description:</Form.Label>
+            <FormControl value={ticket.description} readOnly />
+          </FormGroup>
+          <FormGroup className="show-container">
+            <Form.Label>Ticket status:</Form.Label>
+            <FormControl value={ticket.status} readOnly />
+          </FormGroup>
+          <FormGroup className="show-container">
+            <Form.Label>Client name:</Form.Label>
+            <FormControl value={client.name} readOnly />
+          </FormGroup>
+          {technician.length > 0 && (
+            <FormGroup className="show-container">
+              <Form.Label>Technician(s) name:</Form.Label>
+              {technician.map((tech) => (
+                <FormControl key={tech.id} value={tech.name} readOnly />
+              ))}
+            </FormGroup>
+          )}
+        </Form>
+      </Card>
     </>
   )
 }

@@ -14,14 +14,22 @@ export default function Tickets() {
   const [currentSortOption, setCurrentSortOption] = useState('id');
   const [currentSortDirection, setCurrentSortDirection] = useState('asc');
 
-  const fetchTechnicians = () => {
-    axiosClient.get("/users")
+  const fetchTechnicians = (page = 1, allTechnicians = {}) => {
+    axiosClient
+      .get(`/technicians?page=${page}`)
       .then(({ data }) => {
         const techniciansData = data.data.reduce((acc, technician) => {
           acc[technician.id] = technician;
           return acc;
         }, {});
-        setTechnicians(techniciansData);
+  
+        const mergedTechnicians = { ...allTechnicians, ...techniciansData };
+  
+        if (data.meta.current_page < data.meta.last_page) {
+          fetchTechnicians(page + 1, mergedTechnicians);
+        } else {
+          setTechnicians(mergedTechnicians);
+        }
       })
       .catch(() => {
       });
@@ -61,7 +69,7 @@ export default function Tickets() {
 
   useEffect(() => {
     getTickets(currentPage, currentSortOption, currentSortDirection);
-    fetchTechnicians();
+    fetchTechnicians(1);
   }, [currentPage, currentSortOption, currentSortDirection]);
 
   const goToNextPage = () => {

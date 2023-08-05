@@ -18,6 +18,10 @@ body {
     margin: 20px;
 }
 
+.show-container {
+    margin: 20px;
+}
+
 /* Add spacing from the borders of the container */
 .form-container {
     padding: 10px; /* Adjust the value as needed */
