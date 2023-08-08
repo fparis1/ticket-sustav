@@ -110,7 +110,7 @@ export default function Clients() {
   return (
     <div style={{marginTop : "10px"}}>
       <div style={{ display: 'flex', justifyContent: "space-between", alignItems: "center", marginBottom: "10px"}}>
-        <h1>Clients</h1>
+        <h1 className='custom'>Clients</h1>
         <Link className="btn btn-primary" to="/clients/new">Add new client</Link>
       </div>
       <div className="card animated fadeInDown">

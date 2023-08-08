@@ -86,7 +86,7 @@ export default function TicketForm() {
 
   return (
     <>
-      <h1>Ticket info</h1>
+      <h1 className='custom' style={{margin: "10px"}}>Ticket info</h1>
       <Card className="animated fadeInDown">
         {loading && (
           <div className="text-center">

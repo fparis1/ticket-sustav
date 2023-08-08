@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import axiosClient from "../axios-client.js";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useStateContext } from "../context/ContextProvider.jsx";
 import ProgressBar from "@ramonak/react-progress-bar";
-import { Table, Form, Button, Modal } from "react-bootstrap";
+import { Table, Form, Button } from "react-bootstrap";
 import Select from "react-select";
+import "./../index.css";
 
 export default function Comments() {
   const [subtasks, setSubtasks] = useState([]);
@@ -17,9 +18,7 @@ export default function Comments() {
   const [technicianId, setTechnicianId] = useState("");
   const [completedPercentage, setCompletedPercentage] = useState(0);
   const [completedTasks, setCompletedTasks] = useState(0);
-  const {user, setNotification} = useStateContext();
-  const [showErrorModal, setShowErrorModal] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const {user} = useStateContext();
   const [errors, setErrors] = useState(null)
   
   const technicianFromQuery = users.find((user) => user.id === parseInt(technicianId, 10));
@@ -29,6 +28,8 @@ export default function Comments() {
   useEffect(() => {
     fetchData();
   }, [ticketId]);
+
+  //used for calculating percentage of completed tasks
 
   useEffect(() => {
     const completedTasks = subtasks.filter((subtask) => subtask.status === 'completed');
@@ -41,13 +42,15 @@ export default function Comments() {
   const fetchData = async () => {
     setLoading(true);
     try {
+
+      //get all users so that they can be displayed in table
+
       const usersResponse = await axiosClient.get(`/users/`, { params: { page: 1, limit: 100 } });
       const allTechnicians = usersResponse.data.data;
   
       if (usersResponse.data.meta.current_page < usersResponse.data.meta.last_page) {
         const totalPages = usersResponse.data.meta.last_page;
         const additionalRequests = [];
-  
         for (let page = 2; page <= totalPages; page++) {
           additionalRequests.push(axiosClient.get(`/users/`, { params: { page, limit: 100 } }));
         }
@@ -57,7 +60,6 @@ export default function Comments() {
           allTechnicians.push(...response.data.data);
         });
       }
-  
       setUsers(allTechnicians);
   
       const ticketResponse = await axiosClient.get(`/tickets/${ticketId}`);
@@ -80,14 +82,7 @@ export default function Comments() {
 
   const handleFormSubmit = async (event) => {
     event.preventDefault();
-    /*
-    if (status === 'in progress' && technicianId === '') {
-      setErrorMessage("Technician is required for 'in progress' status.");
-      setShowErrorModal(true);
-      return;
-    }
-    */
-   debugger;
+   //check if there is technician selected or not
     const newSubtask = {
       technician_id : (technicianId !== '' ? ''+technicianId : '-'),
       ticket_id: ticketId,
@@ -95,6 +90,7 @@ export default function Comments() {
       status: status,
     }
 
+    //add new subtask into the list of the subtasks
     try {
       const response = await axiosClient.post("/subtasks/", newSubtask);
       const data = response.data;
@@ -105,7 +101,6 @@ export default function Comments() {
       setTechnicianId("");
       setErrors(null);
     } catch (err) {
-      debugger;
       console.error("Error creating subtask:", err);
       const response = err.response;
       if (response && response.status === 422) {
@@ -116,7 +111,7 @@ export default function Comments() {
       }
     }
   };
-
+  //reset technicianId when todo status is selected
   const setStatusWithReset = (newStatus) => {
     if (newStatus === 'todo') {
       setTechnicianId(''); 
@@ -135,6 +130,7 @@ export default function Comments() {
     try {
       const response = await axiosClient.put(`/subtasks/${subtask.id}`, newSubtask);
       const updatedSubtask = response.data;
+      //update value of previous subtasks from table
       setSubtasks((prevSubtasks) =>
         prevSubtasks.map((st) => (st.id === updatedSubtask.id ? updatedSubtask : st))
       );
@@ -147,15 +143,10 @@ export default function Comments() {
     }
   };
 
-  const handleCloseErrorModal = () => {
-    setShowErrorModal(false);
-    setErrorMessage("");
-  };
-
   return (
     <div>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "10px", marginBottom: "10px"}}>
-        <h1>Subtasks for ticket <u>{ticket.name}</u></h1>
+        <h1 className='custom'>Subtasks for ticket <u>{ticket.name}</u></h1>
         {user.role === 'admin' &&
         <Button className={showForm ? "btn-danger" : "btn-success"} onClick={() => setShowForm(!showForm)}>
         {showForm ? "Cancel" : "Create New Subtask"}
@@ -169,19 +160,6 @@ export default function Comments() {
               ))}
             </div>
       }
-        {/*}
-        <Modal show={showErrorModal} onHide={handleCloseErrorModal}>
-          <Modal.Header closeButton>
-            <Modal.Title>Error</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>{errorMessage}</Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={handleCloseErrorModal}>
-              Close
-            </Button>
-          </Modal.Footer>
-        </Modal>
-        {*/}
         {showForm && (
           <Form onSubmit={handleFormSubmit} className="form-container">
             <Form.Group>
@@ -230,7 +208,7 @@ export default function Comments() {
         <Table striped bordered responsive>
           <thead>
             <tr>
-              <th>User</th>
+              <th>Technician</th>
               <th>Description</th>
               <th>Status</th>
               {user.role === 'tech' && <th>Actions</th>}

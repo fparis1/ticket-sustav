@@ -53,7 +53,7 @@ export default function Tickets() {
       })
   }
 
-  const getTickets = (page = 1, sortBy = 'id', sortDir = 'desc') => {
+  const getTickets = (page, sortBy, sortDir) => {
     setLoading(true);
     axiosClient
       .get(`/tickets?page=${page}&sort_by=${sortBy}&sort_dir=${sortDir}`)
@@ -126,7 +126,7 @@ export default function Tickets() {
   return (
     <Container style={{marginTop : "10px"}}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom : "10px"}}>
-        <h1>Tickets</h1>
+        <h1 className='custom'>Tickets</h1>
         {user.role === "admin" && <Link className="btn btn-primary" to="/tickets/new">Add new ticket</Link>}
       </div>
       <div className="card animated fadeInDown">

@@ -10,7 +10,7 @@ export default function Login() {
   const emailRef = createRef()
   const passwordRef = createRef()
   const { setUser, setToken } = useStateContext()
-  const [message, setMessage] = useState(null)
+  const [errors, setErrors] = useState(null);
 
   const onSubmit = ev => {
     ev.preventDefault()
@@ -27,29 +27,35 @@ export default function Login() {
       .catch((err) => {
         const response = err.response;
         if (response && response.status === 422) {
-          setMessage(response.data.message)
+          setErrors(response.data.errors)
         }
       })
   }
 
   return (
-    <div className="login-signup-form animated fadeInDown" style={{borderColor : "black", borderStyle : "ridge", backgroundColor : "white"}}>
+    <div>
       <div className="form">
       <Form onSubmit={onSubmit} className="login-signup-container">
         <h2>Login into your account</h2>
 
-        {message && <div className="alert alert-danger"><p>{message}</p></div>}
+        {errors && (
+            <div className="alert alert-danger">
+              {Object.keys(errors).map((key) => (
+                <p key={key}>{errors[key][0]}</p>
+              ))}
+            </div>
+          )}
 
-        <Form.Group controlId="formEmail" style={{marginTop : "10px"}}>
-          <Form.Control ref={emailRef} type="email" placeholder="Email" />
+        <Form.Group controlId="formEmail" style={{marginTop : "10px"}} >
+          <Form.Control ref={emailRef} type="email" placeholder="Email"/>
         </Form.Group>
-        <Form.Group controlId="formPassword" style={{marginTop : "10px"}}>
+        <Form.Group controlId="formPassword" style={{marginTop : "10px", marginBottom: "10px"}} >
           <Form.Control ref={passwordRef} type="password" placeholder="Password" />
         </Form.Group>
 
-        <Button className="btn btn-primary" type="submit" style={{marginTop : "10px"}}>Login</Button>
+        <Button variant="outline-light" type="submit" style={{marginTop : "10px", marginBottom: "10px"}}>Login</Button>
 
-        <p className="message">Not registered? <Link to="/signup" className="btn btn-primary" style={{padding : "3px"}}>Create an account</Link></p>
+        <p className="message">Not registered? <Link to="/signup" variant="link" className="text-white-50" style={{padding : "3px"}}>Create an account</Link></p>
       </Form>
       </div>
     </div>

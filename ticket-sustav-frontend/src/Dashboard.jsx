@@ -4,7 +4,7 @@ function Dashboard() {
 
   return (
     <div style={{margin: "20px"}}>
-        <h1>Dashboard</h1>
+        <h1 className='custom'>Dashboard</h1>
     </div>
   )
 }

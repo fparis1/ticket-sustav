@@ -8,8 +8,7 @@
     margin-right: auto;
     margin-left: auto;
 }
-  
-/* Prevent horizontal scrolling when the navbar is collapsed */
+
 body {
     overflow-x: hidden;
 }
@@ -22,9 +21,8 @@ body {
     margin: 20px;
 }
 
-/* Add spacing from the borders of the container */
 .form-container {
-    padding: 10px; /* Adjust the value as needed */
+    padding: 10px;
 }
 
 .login-signup-container {
@@ -45,7 +43,7 @@ body {
 }
 
 .form-field {
-    margin-bottom: 10px; /* You can adjust this value to increase or decrease the spacing */
+    margin-bottom: 10px;
 }
 #guestLayout {
     display: flex;
@@ -53,4 +51,22 @@ body {
     align-items: center;
     height: 100vh;
     margin: 0;
+}
+
+
+body {
+    background-image: url(./images/sharepoint-ticketing.png);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+    height: 100vh; /* Set the height to 100% of the viewport height */
+}
+
+.custom-navbar .nav-link.active-link {
+    font-weight: bold;
+    color: white; /* Change this to your desired color */
+}
+
+.custom {
+    color: white;
 }

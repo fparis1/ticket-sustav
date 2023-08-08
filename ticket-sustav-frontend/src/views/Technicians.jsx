@@ -38,7 +38,7 @@ export default function Technicians() {
       })
   }
 
-  const getTechnicians = (page = 1, sortBy = 'id', sortDir = 'desc') => {
+  const getTechnicians = (page, sortBy, sortDir) => {
     setLoading(true);
     axiosClient
       .get(`/technicians?page=${page}&sort_by=${sortBy}&sort_dir=${sortDir}`)
@@ -109,11 +109,11 @@ export default function Technicians() {
 
   return (
     <Container style={{marginTop : "10px"}}>
-      <div style={{display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom : "10px"}}>
-        <h1>Technicians</h1>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom : "10px"}}>
+        <h1 className='custom'>Technicians</h1>
       </div>
       <div className="card animated fadeInDown">
-        <Table striped bordered hover>
+        <Table responsive striped bordered hover>
           <thead>
             <tr>
               {renderSortButton('name', 'Name')}

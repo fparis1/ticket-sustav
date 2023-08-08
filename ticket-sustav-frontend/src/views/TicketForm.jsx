@@ -130,9 +130,9 @@ export default function TicketForm() {
   }
 
   const statusOptions = [
-    { value: 'open', label: 'open' },
+    ...((!ticket.id || user.role === 'admin') ? [{ value: 'open', label: 'open' }] : []),
     { value: 'taken', label: 'taken' },
-    ...(ticket.id ? [{ value: 'closed', label: 'closed' }] : []),
+    ...(ticket.id && (ticket.technician_id.includes(user.id) || user.role === 'admin') ? [{ value: 'closed', label: 'closed' }] : []),
   ];
 
   const clientOptions = clients.map((client) => ({
@@ -160,8 +160,8 @@ export default function TicketForm() {
 
   return (
     <Container className="form-container">
-      {ticket.id && <h1>Update Ticket: {ticket.name}</h1>}
-      {!ticket.id && <h1>New Ticket</h1>}
+      {ticket.id && <h1 className='custom' style={{margin: "10px"}}>Update Ticket: {ticket.name}</h1>}
+      {!ticket.id && <h1 className='custom' style={{margin: "10px"}}>New Ticket</h1>}
       <div className="card animated fadeInDown">
         {loading && (
           <div className="text-center">

@@ -41,16 +41,8 @@ export default function Signup() {
   };
 
   return (
-    <div className="login-signup-form animated fadeInDown">
-      <div
-        className="login-signup-container"
-        style={{
-          borderColor: "black",
-          borderStyle: "ridge",
-          backgroundColor: "white",
-          padding: "20px",
-        }}
-      >
+    <div>
+      <div>
         <Form onSubmit={onSubmit} className="login-signup-container">
           <h1 className="title">Signup</h1>
           {errors && (
@@ -60,7 +52,7 @@ export default function Signup() {
               ))}
             </div>
           )}
-          <Form.Group>
+          <Form.Group style={{marginTop : "10px"}}>
             <Form.Control ref={nameRef} type="text" placeholder="Full Name" className="form-field" />
           </Form.Group>
           <Form.Group>
@@ -85,6 +77,7 @@ export default function Signup() {
               value="admin"
               label="Admin"
               className="form-field"
+              style={{marginTop : "10px"}}
             />
             <Form.Check
               ref={techRoleRef}
@@ -95,11 +88,11 @@ export default function Signup() {
               className="form-field"
             />
           </div>
-          <Button className="btn btn-block btn-primary" type="submit">
+          <Button variant="outline-light" type="submit" style={{marginTop : "10px", marginBottom : "10px"}}>
             Signup
           </Button>
           <p className="message">
-            Already registered? <Link to="/login" className="btn btn-primary" style={{padding : "3px"}}>Sign In</Link>
+            Already registered? <Link to="/login" variant="link" className="text-white-50" style={{padding : "3px"}}>Sign In</Link>
           </p>
         </Form>
       </div>

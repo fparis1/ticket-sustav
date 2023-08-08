@@ -80,7 +80,7 @@ export default function Comments() {
   return (
     <div>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" , marginTop: "10px", marginBottom: "10px"}}>
-        <h1>Comments for ticket <u>{ticket.name}</u></h1>
+        <h1 className='custom'>Comments for ticket <u>{ticket.name}</u></h1>
         <Button className={showAddComment ? "btn-danger" : "btn-success"} onClick={() => setShowAddComment(!showAddComment)}>
           {showAddComment ? "Cancel" : "Add new comment"}
         </Button>
@@ -88,7 +88,7 @@ export default function Comments() {
       {showAddComment && (
         <div>
           <Form onSubmit={handleAddComment}>
-            <Form.Label>Description:</Form.Label>
+            <Form.Label className='custom'>Description:</Form.Label>
             <Form.Control type="text" name="description" required />
             <br/>
             <Button type="submit" className="btn-success">Add Comment</Button>

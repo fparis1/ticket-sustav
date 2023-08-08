@@ -75,8 +75,8 @@ export default function ClientForm() {
 
   return (
     <Container className="form-container">
-      {client.id && <h1>Update Client: {client.name}</h1>}
-      {!client.id && <h1>New Client</h1>}
+      {client.id && <h1 className='custom' style={{margin: "10px"}}>Update Client: {client.name}</h1>}
+      {!client.id && <h1 className='custom' style={{margin: "10px"}}>New Client</h1>}
       <Card className="animated fadeInDown">
         {loading && (
           <div className="text-center">
