@@ -263,7 +263,7 @@ export default function Comments() {
       </div>
       <div className="progress-bar-container" style={{marginTop: "20px"}}>
           {subtasks.length > 0 && (<ProgressBar completed={completedPercentage} bgColor="green" height="15px"/>)}
-          {subtasks.length > 0 && (<div className="percentage-text">{`${completedTasks.length} out of ${subtasks.length} completed`}</div>)}
+          {subtasks.length > 0 && (<div className="percentage-text" id="percent">{`${completedTasks.length} out of ${subtasks.length} completed`}</div>)}
         </div>
     </div>
   )
