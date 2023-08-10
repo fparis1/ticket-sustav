@@ -68,6 +68,10 @@ const router = createBrowserRouter(
       {
         path: 'subtasks/:ticketId',
         element: <Subtasks key="subtaskShow"/>
+      },
+      {
+        path: '/signup',
+        element: <Signup/>
       }
     ]
   },
@@ -78,10 +82,6 @@ const router = createBrowserRouter(
       {
         path: '/login',
         element: <Login/>
-      },
-      {
-        path: '/signup',
-        element: <Signup/>
       }
     ]
   },

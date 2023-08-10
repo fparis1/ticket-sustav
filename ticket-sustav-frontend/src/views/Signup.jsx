@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { createRef, useState } from "react";
 import axiosClient from "../axios-client.js";
 import { useStateContext } from "../context/ContextProvider.jsx";
@@ -10,27 +10,25 @@ export default function Signup() {
   const emailRef = createRef();
   const passwordRef = createRef();
   const passwordConfirmationRef = createRef();
-  const adminRoleRef = createRef();
-  const techRoleRef = createRef();
-  const { setUser, setToken } = useStateContext();
+  const navigate = useNavigate();
+  const { setNotification } = useStateContext();
   const [errors, setErrors] = useState(null);
 
   const onSubmit = (ev) => {
     ev.preventDefault();
-    const isAdminChecked = adminRoleRef.current.checked;
-    const isTechChecked = techRoleRef.current.checked;
+    debugger;
     const payload = {
       name: nameRef.current.value,
       email: emailRef.current.value,
       password: passwordRef.current.value,
       password_confirmation: passwordConfirmationRef.current.value,
-      role: isAdminChecked ? "admin" : isTechChecked ? "tech" : "",
+      role: "tech",
     };
     axiosClient
       .post("/signup", payload)
-      .then(({ data }) => {
-        setUser(data.user);
-        setToken(data.token);
+      .then(({}) => {
+        setNotification('Technician was successfully created')
+        navigate('/technicians');
       })
       .catch((err) => {
         const response = err.response;
@@ -44,7 +42,7 @@ export default function Signup() {
     <div>
       <div>
         <Form onSubmit={onSubmit} className="login-signup-container">
-          <h1 className="title">Signup</h1>
+          <h1 className="custom">Create new technican</h1>
           {errors && (
             <div className="alert alert-danger">
               {Object.keys(errors).map((key) => (
@@ -69,31 +67,9 @@ export default function Signup() {
               className="form-field"
             />
           </Form.Group>
-          <div className="radio-container">
-            <Form.Check
-              ref={adminRoleRef}
-              type="radio"
-              name="role"
-              value="admin"
-              label="Admin"
-              className="form-field"
-              style={{marginTop : "10px"}}
-            />
-            <Form.Check
-              ref={techRoleRef}
-              type="radio"
-              name="role"
-              value="tech"
-              label="Technician"
-              className="form-field"
-            />
-          </div>
           <Button variant="outline-light" type="submit" style={{marginTop : "10px", marginBottom : "10px"}}>
             Signup
           </Button>
-          <p className="message">
-            Already registered? <Link to="/login" variant="link" className="text-white-50" style={{padding : "3px"}}>Sign In</Link>
-          </p>
         </Form>
       </div>
     </div>

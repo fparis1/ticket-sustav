@@ -34,7 +34,7 @@ export default function Technicians() {
     axiosClient.delete(`/users/${technician.id}`)
       .then(() => {
         setNotification('Technician was successfully deleted')
-        getTechnicians()
+        getTechnicians(currentPage, currentSortOption, currentSortDirection);
       })
   }
 
@@ -111,6 +111,7 @@ export default function Technicians() {
     <Container style={{marginTop : "10px"}}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom : "10px"}}>
         <h1 className='custom'>Technicians</h1>
+        <Link to="/signup" className="btn btn-success">Create new technican</Link>
       </div>
       <div className="card animated fadeInDown">
         <Table responsive striped bordered hover>
