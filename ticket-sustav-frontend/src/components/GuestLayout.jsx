@@ -3,9 +3,9 @@ import { useStateContext } from "../context/ContextProvider";
 import { useEffect } from "react";
 import "../index.css";
 
-export default function GuestLayout() {
+export default function GuestLayout({ errors }) {
   const { user, token } = useStateContext();
-
+  
   useEffect(() => {
     document.body.style.backgroundColor = "lightblue";
   })
@@ -21,8 +21,14 @@ export default function GuestLayout() {
           <div class="col-12 col-md-8 col-lg-6 col-xl-5">
             <div class="card bg-dark text-white" style={{borderRadius: "1rem"}}>
               <div class="card-body p-5 text-center">
-
                 <div class="mb-md-5 mt-md-4 pb-5">
+                  {errors && (
+                      <div className="alert alert-danger">
+                        {Object.keys(errors).map((key) => (
+                          <p key={key}>{errors[key][0]}</p>
+                        ))}
+                      </div>
+                    )}
                   <Outlet/>
                 </div>
               </div>

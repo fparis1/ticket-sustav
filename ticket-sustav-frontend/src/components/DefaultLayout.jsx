@@ -55,11 +55,6 @@ export default function DefaultLayout() {
         <Navbar.Collapse id="basic-navbar-nav" className={navbarCollapsed ? "show" : ""}>
           <Nav className="mr-auto">
             <Nav.Item>
-              <Nav.Link as={Link} to="/dashboard" onClick={() => onLinkClick('dashboard')} style={{ color: linkDestination === 'dashboard' ? 'white' : 'grey' }}>
-                <i className="fa fa-home"></i> Dashboard
-              </Nav.Link>
-            </Nav.Item>
-            <Nav.Item>
               <Nav.Link as={Link} to="/tickets" onClick={() => onLinkClick('tickets')} style={{ color: linkDestination === 'tickets' ? 'white' : 'grey' }}>
                 <i className="fa fa-ticket"></i> Tickets
               </Nav.Link>

@@ -23,7 +23,7 @@ export default function Clients() {
 
   const checkRole = () => {
     if (user.role === "tech") {
-      navigate('/dashboard');
+      navigate('/tickets');
     }
   };
 

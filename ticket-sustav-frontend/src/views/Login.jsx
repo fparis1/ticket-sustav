@@ -55,7 +55,6 @@ export default function Login() {
 
         <Button variant="outline-light" type="submit" style={{marginTop : "10px", marginBottom: "10px"}}>Login</Button>
 
-        <p className="message">Not registered? <Link to="/signup" variant="link" className="text-white-50" style={{padding : "3px"}}>Create an account</Link></p>
       </Form>
       </div>
     </div>
