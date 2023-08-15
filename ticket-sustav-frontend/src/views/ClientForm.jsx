@@ -139,9 +139,12 @@ export default function ClientForm() {
                 </Form.Group>
               </Col>
             </Row>
-            <Button className="btn" type="submit" style={{margin: "30px"}}>
+            {id && <Button className="btn" type="submit" style={{margin: "30px"}}>
               Save
-            </Button>
+            </Button>}
+            {!id && <Button className="btn btn-success" type="submit" style={{margin: "30px"}}>
+              Create
+            </Button>}
           </Form>
         )}
       </Card>

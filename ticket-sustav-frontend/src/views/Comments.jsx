@@ -35,14 +35,32 @@ export default function Comments() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [commentsResponse, usersResponse, ticketResponse] = await Promise.all([
-        axiosClient.get(`/comments/${ticketId}/`),
-        axiosClient.get(`/users/`),
-        axiosClient.get(`/tickets/${ticketId}`)
-      ]);
-      setComments(commentsResponse.data.data);
-      setUsers(usersResponse.data.data);
-      setTicket(ticketResponse.data);
+      let allUsers = [];
+      let page = 1;
+      let usersResponse;
+    
+      do {
+        usersResponse = await axiosClient.get(`/users/?page=${page}`).catch(error => ({ data: { data: [] } }));
+        if (usersResponse.data) {
+          allUsers = allUsers.concat(usersResponse.data.data);
+        }
+        page++;
+        debugger;
+      } while (page <= usersResponse.data.meta.last_page);
+    
+      // Now allUsers contains all fetched users
+      setUsers(allUsers);
+    
+      const commentsResponse = await axiosClient.get(`/comments/${ticketId}/`).catch(error => ({ data: { data: [] } }));
+      const ticketResponse = await axiosClient.get(`/tickets/${ticketId}`).catch(error => ({ data: {} }));
+    
+      if (commentsResponse.data) {
+        setComments(commentsResponse.data.data);
+      }
+    
+      if (ticketResponse.data) {
+        setTicket(ticketResponse.data);
+      }
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -51,7 +69,6 @@ export default function Comments() {
   };
 
   const findUserById = (userId) => {
-    debugger;
     return users.find(user => String(user.id) === userId);
   };
 

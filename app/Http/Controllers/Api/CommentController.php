@@ -34,7 +34,7 @@ class CommentController extends Controller
      */
     public function show($ticketId)
     {
-        $comments = Comment::where('ticket_id', $ticketId)->orderBy('id', 'asc')->get();
+        $comments = Comment::where('ticket_id', $ticketId)->orderBy('created_at', 'desc')->get();
 
         if ($comments->isEmpty()) {
             return response()->json(['message' => 'No comments found for the given ticket_id'], 404);
