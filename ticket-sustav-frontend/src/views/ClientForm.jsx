@@ -75,8 +75,8 @@ export default function ClientForm() {
 
   return (
     <Container className="form-container">
-      {client.id && <h1 className='custom' style={{margin: "10px"}}>Update Client: {client.name}</h1>}
-      {!client.id && <h1 className='custom' style={{margin: "10px"}}>New Client</h1>}
+      {client.id && <h1 className='custom'>Update Client: {client.name}</h1>}
+      {!client.id && <h1 className='custom'>New Client</h1>}
       <Card className="animated fadeInDown">
         {loading && (
           <div className="text-center">
@@ -139,10 +139,10 @@ export default function ClientForm() {
                 </Form.Group>
               </Col>
             </Row>
-            {id && <Button className="btn" type="submit" style={{margin: "30px"}}>
+            {id && <Button className="btn form-button-style" type="submit">
               Save
             </Button>}
-            {!id && <Button className="btn btn-success" type="submit" style={{margin: "30px"}}>
+            {!id && <Button className="btn btn-success form-button-style" type="submit">
               Create
             </Button>}
           </Form>

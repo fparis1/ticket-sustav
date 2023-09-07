@@ -46,14 +46,14 @@ export default function Login() {
             </div>
           )}
 
-        <Form.Group controlId="formEmail" style={{marginTop : "10px"}} >
+        <Form.Group controlId="formEmail" className="container-style" >
           <Form.Control ref={emailRef} type="email" placeholder="Email"/>
         </Form.Group>
-        <Form.Group controlId="formPassword" style={{marginTop : "10px", marginBottom: "10px"}} >
+        <Form.Group controlId="formPassword" className="submit-form" >
           <Form.Control ref={passwordRef} type="password" placeholder="Password" />
         </Form.Group>
 
-        <Button variant="outline-light" type="submit" style={{marginTop : "10px", marginBottom: "10px"}}>Login</Button>
+        <Button variant="outline-light" type="submit" className="submit-form">Login</Button>
 
       </Form>
       </div>

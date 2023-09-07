@@ -96,7 +96,7 @@ export default function Comments() {
 
   return (
     <div>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" , marginTop: "10px", marginBottom: "10px"}}>
+      <div className="header-style container-style">
         <h1 className='custom'>Comments for ticket <u>{ticket.name}</u></h1>
         <Button className={showAddComment ? "btn-danger" : "btn-success"} onClick={() => setShowAddComment(!showAddComment)}>
           {showAddComment ? "Cancel" : "Add new comment"}

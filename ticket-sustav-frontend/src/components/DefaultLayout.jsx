@@ -89,7 +89,7 @@ export default function DefaultLayout() {
       </Navbar>
         <div className="container-xl" style={{justifyContent: "center", alignItems: "center"}}>
           <div className="row">
-            <div className="col-lg-12 col-md-12 col-sm-4">
+          <div class="col-12">
               <main>
                 <Outlet />
               </main>

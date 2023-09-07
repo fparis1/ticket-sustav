@@ -145,7 +145,7 @@ export default function Comments() {
 
   return (
     <div>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "10px", marginBottom: "10px"}}>
+      <div className="header-style">
         <h1 className='custom'>Subtasks for ticket <u>{ticket.name}</u></h1>
         {user.role === 'admin' &&
         <Button className={showForm ? "btn-danger" : "btn-success"} onClick={() => setShowForm(!showForm)}>
@@ -261,7 +261,7 @@ export default function Comments() {
           )}
         </Table>
       </div>
-      <div className="progress-bar-container" style={{marginTop: "20px"}}>
+      <div className="progress-bar-container progress-style">
           {subtasks.length > 0 && (<ProgressBar completed={completedPercentage} bgColor="green" height="15px"/>)}
           {subtasks.length > 0 && (<div className="percentage-text" id="percent">{`${completedTasks.length} out of ${subtasks.length} completed`}</div>)}
         </div>

@@ -108,10 +108,10 @@ export default function Technicians() {
   };
 
   return (
-    <Container style={{marginTop : "10px"}}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom : "10px"}}>
+    <Container className="container-style">
+      <div className="header-style">
         <h1 className='custom'>Technicians</h1>
-        <Link to="/signup" className="btn btn-success">Create new technican</Link>
+        <Link to="/technicians/new" className="btn btn-success">Create new technican</Link>
       </div>
       <div className="card animated fadeInDown">
         <Table responsive striped bordered hover>
@@ -146,7 +146,7 @@ export default function Technicians() {
           }
         </Table>
         {totalPages > 1 &&
-          <div style={{ display: "flex", justifyContent: "center", marginTop: "10px", marginBottom: "20px" }}>
+          <div className="pagination">
             <Button onClick={goToPreviousPage} disabled={currentPage === 1}>
               Previous
             </Button>

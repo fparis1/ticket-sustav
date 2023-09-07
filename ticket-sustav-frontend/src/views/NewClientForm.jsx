@@ -69,8 +69,8 @@ export default function NewClientForm({ isOpen, onClose, onCreateClient, showTic
               required
             />
           </Form.Group>
-          <Button variant="success" type="button" onClick={handleFormSubmit} style={{marginRight: "10px", marginTop: "10px"}}>Create Client</Button>
-          <Button variant="danger" onClick={onClose} style={{marginTop: "10px"}}>Cancel</Button>
+          <Button variant="success" type="button" onClick={handleFormSubmit} className="container-style client-style">Create Client</Button>
+          <Button variant="danger" onClick={onClose} className="container-style">Cancel</Button>
           {showTicketButton && (
             <Button variant="info" onClick={() => console.log("Save Ticket")}>
               Save Ticket

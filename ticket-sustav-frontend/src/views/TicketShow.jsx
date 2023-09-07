@@ -37,7 +37,6 @@ export default function TicketForm() {
 
   const fetchTechnician = (techIds) => {
     if (!techIds || techIds.length === 0) {
-      // No technician IDs to fetch, return an empty array
       setTechnician([]);
       return;
     }
@@ -54,7 +53,6 @@ export default function TicketForm() {
   
     Promise.all(fetchTechniciansPromises)
       .then((technicians) => {
-        // Filter out any null values (failed requests)
         const filteredTechnicians = technicians.filter((tech) => tech !== null);
         setTechnician(filteredTechnicians);
       })
@@ -74,7 +72,7 @@ export default function TicketForm() {
           if (data.technician_id !== '-') {
             fetchTechnician(Array.isArray(data.technician_id) ? data.technician_id : [data.technician_id]);
           } else {
-            setTechnician([]); // No technicians to fetch, set an empty array
+            setTechnician([]);
           }
           fetchClient(data.client_id);
         })
@@ -86,7 +84,7 @@ export default function TicketForm() {
 
   return (
     <>
-      <h1 className='custom' style={{margin: "10px"}}>Ticket info</h1>
+      <h1 className='custom'>Ticket info</h1>
       <Card className="animated fadeInDown">
         {loading && (
           <div className="text-center">

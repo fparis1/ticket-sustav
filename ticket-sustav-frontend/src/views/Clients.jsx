@@ -108,8 +108,8 @@ export default function Clients() {
   };
 
   return (
-    <div style={{marginTop : "10px"}}>
-      <div style={{ display: 'flex', justifyContent: "space-between", alignItems: "center", marginBottom: "10px"}}>
+    <div className="container-style">
+      <div className="header-style">
         <h1 className='custom'>Clients</h1>
         <Link className="btn btn-primary" to="/clients/new">Add new client</Link>
       </div>
@@ -140,9 +140,9 @@ export default function Clients() {
                   <td>{c.email}</td>
                   <td>{c.phone}</td>
                   <td>
-                    <Link style={{marginBottom : "2px", marginTop : "2px"}} className="btn btn-warning" to={'/clients/' + c.id}>Edit</Link>
+                    <Link className="btn btn-warning actions-link" to={'/clients/' + c.id}>Edit</Link>
                     &nbsp;
-                    <Button style={{marginBottom : "2px", marginTop : "2px"}} variant="danger" onClick={ev => onDeleteClick(c)}>Delete</Button>
+                    <Button className="actions-link" variant="danger" onClick={ev => onDeleteClick(c)}>Delete</Button>
                   </td>
                 </tr>
               ))}
@@ -150,7 +150,7 @@ export default function Clients() {
           }
         </Table>
         {totalPages > 1 &&
-          <div style={{ display: "flex", justifyContent: "center", marginTop: "10px", marginBottom: "20px" }}>
+          <div className="pagination">
             <Button onClick={goToPreviousPage} disabled={currentPage === 1}>Previous</Button>
             {Array.from({ length: totalPages }, (_, index) => index + 1).map((pageNumber) => (
               <Button

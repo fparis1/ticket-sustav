@@ -23,10 +23,15 @@ class CommentController extends Controller
      */
     public function store(StoreCommentRequest $request)
     {
-        $data = $request->validated();
-        $comment = Comment::create($data);
+        $comment = new Comment([
+            'description' => $request->input('description'),
+            'ticket_id' => $request->input('ticket_id'),
+            'user_id' => $request->input('user_id'),
+        ]);
 
-        return response(new CommentResource($comment) , 201);
+        $comment->save();
+
+        return response(null, 201);
     }
 
     /**

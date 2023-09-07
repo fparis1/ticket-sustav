@@ -124,8 +124,8 @@ export default function Tickets() {
   };
 
   return (
-    <Container style={{marginTop : "10px"}}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom : "10px"}}>
+    <Container className="container-style">
+      <div className="header-style">
         <h1 className='custom'>Tickets</h1>
         {user.role === "admin" && <Link className="btn btn-primary" to="/tickets/new">Add new ticket</Link>}
       </div>
@@ -168,29 +168,29 @@ export default function Tickets() {
                     ))}
                   </td>
                   <td>
-                    <Link style={{marginBottom : "2px", marginTop : "2px"}} className="btn btn-primary" id="show" to={'/tickets/' + t.id + '/' + t.id}>Show</Link>
+                    <Link className="btn btn-primary actions-link" to={'/tickets/' + t.id + '/' + t.id}>Show</Link>
                     &nbsp;
                     {t.status !== 'closed' &&
-                      <Link style={{marginBottom : "2px", marginTop : "2px"}} className="btn btn-warning" to={'/tickets/' + t.id}>Edit</Link>
+                      <Link className="btn btn-warning actions-link" to={'/tickets/' + t.id}>Edit</Link>
                     }
                     &nbsp;
                     {user.role === "admin" &&
-                      <Button style={{marginBottom : "2px", marginTop : "2px"}} className="btn btn-danger" onClick={ev => onDeleteClick(t)}>Delete</Button>
+                      <Button className="btn btn-danger actions-link" onClick={ev => onDeleteClick(t)}>Delete</Button>
                     }
                   </td>
                   <td>
                     <Link
-                      className="btn btn-success"
+                      className="btn btn-success actions-link"
                       id="subtask"
                       to={'/subtasks/' + t.id}
-                      style={{ pointerEvents: t.status === 'closed' ? 'none' : 'auto', marginBottom : "2px", marginTop : "2px"}}
+                      style={{ pointerEvents: t.status === 'closed' ? 'none' : 'auto'}}
                       disabled={t.status === 'closed'}
                     >
                       Subtasks
                     </Link>
                   </td>
                   <td>
-                    <Link style={{marginBottom : "2px", marginTop : "2px"}} className="btn btn-info" id="comment" to={'/comments/' + t.id}>Comment</Link>
+                    <Link className="btn btn-info actions-link" to={'/comments/' + t.id}>Comment</Link>
                   </td>
                 </tr>
               ))}
@@ -198,7 +198,7 @@ export default function Tickets() {
           }
         </Table>
         {totalPages > 1 &&
-          <div style={{ display: "flex", justifyContent: "center", marginTop: "10px", marginBottom: "20px" }}>
+          <div className="pagination">
             <Button onClick={goToPreviousPage} disabled={currentPage === 1}>
               Previous
             </Button>

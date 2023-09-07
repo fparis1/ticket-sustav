@@ -160,8 +160,8 @@ export default function TicketForm() {
 
   return (
     <Container className="form-container">
-      {ticket.id && <h1 className='custom' style={{margin: "10px"}}>Update Ticket: {ticket.name}</h1>}
-      {!ticket.id && <h1 className='custom' style={{margin: "10px"}}>New Ticket</h1>}
+      {ticket.id && <h1 className='custom'>Update Ticket: {ticket.name}</h1>}
+      {!ticket.id && <h1 className='custom'>New Ticket</h1>}
       <div className="card animated fadeInDown">
         {loading && (
           <div className="text-center">
@@ -179,7 +179,7 @@ export default function TicketForm() {
           <Form onSubmit={onSubmit}>
             <Row>
               <Col>
-                <Form.Group controlId="ticketName">
+                <Form.Group>
                   <Form.Label>Ticket name:</Form.Label>
                   <Form.Control
                     value={ticket.name}

@@ -59,18 +59,60 @@ body {
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center center;
-    height: 100vh; /* Set the height to 100% of the viewport height */
+    background-attachment: fixed;
+    height: 100vh;
 }
 
 .custom-navbar .nav-link.active-link {
     font-weight: bold;
-    color: white; /* Change this to your desired color */
+    color: white;
 }
 
 .custom {
     color: white;
+    margin: 10px;
 }
 
 #percent {
     color: white;
+}
+
+.actions-link {
+    margin-bottom: 2px;
+    margin-top: 2px;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px; 
+    margin-bottom: 20px;
+}
+
+.header-style {
+    display: flex;
+    justify-content: space-between; 
+    align-items: center; 
+    margin-bottom : 10px;
+}
+
+.container-style {
+    margin-top: 10px;
+}
+
+.client-style {
+    margin-right: 10px;
+}
+
+.form-button-style {
+    margin: 30px;
+}
+
+.submit-form {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.progress-style {
+    margin-top: 20px;
 }

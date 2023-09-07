@@ -50,7 +50,7 @@ export default function Signup() {
               ))}
             </div>
           )}
-          <Form.Group style={{marginTop : "10px"}}>
+          <Form.Group className="container-style">
             <Form.Control ref={nameRef} type="text" placeholder="Full Name" className="form-field" />
           </Form.Group>
           <Form.Group>
@@ -67,8 +67,8 @@ export default function Signup() {
               className="form-field"
             />
           </Form.Group>
-          <Button variant="outline-light" type="submit" style={{marginTop : "10px", marginBottom : "10px"}}>
-            Signup
+          <Button variant="outline-light" type="submit" className="submit-form">
+            Create
           </Button>
         </Form>
       </div>
