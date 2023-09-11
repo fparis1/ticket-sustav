@@ -38,7 +38,7 @@ export default function Technicians() {
       })
   }
 
-  const getTechnicians = (page, sortBy, sortDir) => {
+  const getTechnicians = (page = 1, sortBy = 'id', sortDir = 'asc') => {
     setLoading(true);
     axiosClient
       .get(`/technicians?page=${page}&sort_by=${sortBy}&sort_dir=${sortDir}`)

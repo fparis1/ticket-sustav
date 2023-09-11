@@ -14,26 +14,30 @@ export default function Tickets() {
   const [currentSortOption, setCurrentSortOption] = useState('id');
   const [currentSortDirection, setCurrentSortDirection] = useState('asc');
 
-  const fetchTechnicians = (page = 1, allTechnicians = {}) => {
-    axiosClient
-      .get(`/technicians?page=${page}`)
-      .then(({ data }) => {
+  const fetchTechnicians = async () => {
+    let allTechnicians = {};
+  
+    try {
+      const { data: firstPageData } = await axiosClient.get(`/technicians?page=1`);
+      const totalPages = firstPageData.meta.last_page;
+  
+      for (let page = 1; page <= totalPages; page++) {
+        const { data } = await axiosClient.get(`/technicians?page=${page}`);
+  
         const techniciansData = data.data.reduce((acc, technician) => {
           acc[technician.id] = technician;
           return acc;
         }, {});
   
-        const mergedTechnicians = { ...allTechnicians, ...techniciansData };
+        allTechnicians = { ...allTechnicians, ...techniciansData };
+      }
   
-        if (data.meta.current_page < data.meta.last_page) {
-          fetchTechnicians(page + 1, mergedTechnicians);
-        } else {
-          setTechnicians(mergedTechnicians);
-        }
-      })
-      .catch(() => {
-      });
+      setTechnicians(allTechnicians);
+      debugger;
+    } catch (error) {
+    }
   };
+  
 
   const onDeleteClick = ticket => {
     if (!window.confirm("Are you sure you want to delete this ticket?")) {
@@ -69,7 +73,7 @@ export default function Tickets() {
 
   useEffect(() => {
     getTickets(currentPage, currentSortOption, currentSortDirection);
-    fetchTechnicians(1);
+    fetchTechnicians();
   }, [currentPage, currentSortOption, currentSortDirection]);
 
   const goToNextPage = () => {

@@ -116,3 +116,8 @@ body {
 .progress-style {
     margin-top: 20px;
 }
+
+.default-layout-style {
+    justify-content: center;
+    align-items: center;
+}

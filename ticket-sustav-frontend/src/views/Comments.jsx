@@ -35,25 +35,25 @@ export default function Comments() {
   const fetchData = async () => {
     setLoading(true);
     try {
+      const initialResponse = await axiosClient.get('/users/?page=1').catch(error => ({ data: { data: [], meta: { last_page: 1 } } }));
+      const lastPage = initialResponse.data.meta.last_page;
       let allUsers = [];
-      let page = 1;
-      let usersResponse;
-    
-      do {
-        usersResponse = await axiosClient.get(`/users/?page=${page}`).catch(error => ({ data: { data: [] } }));
+
+      for (let page = 1; page <= lastPage; page++) {
+        const usersResponse = await axiosClient.get(`/users/?page=${page}`).catch(error => ({ data: { data: [] } }));
+        
         if (usersResponse.data) {
           allUsers = allUsers.concat(usersResponse.data.data);
         }
-        page++;
+        
         debugger;
-      } while (page <= usersResponse.data.meta.last_page);
-    
-      // Now allUsers contains all fetched users
+      }
+
       setUsers(allUsers);
     
       const commentsResponse = await axiosClient.get(`/comments/${ticketId}/`).catch(error => ({ data: { data: [] } }));
       const ticketResponse = await axiosClient.get(`/tickets/${ticketId}`).catch(error => ({ data: {} }));
-    
+
       if (commentsResponse.data) {
         setComments(commentsResponse.data.data);
       }

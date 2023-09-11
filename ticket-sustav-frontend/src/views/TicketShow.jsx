@@ -16,9 +16,7 @@ export default function TicketForm() {
     technician_id: '',
   })
 
-  const [client, setClient] = useState({
-
-  })
+  const [client, setClient] = useState({})
   const [technician, setTechnician] = useState({})
   const [errors, setErrors] = useState(null)
   const [loading, setLoading] = useState(false)

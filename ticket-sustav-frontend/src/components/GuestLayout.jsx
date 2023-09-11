@@ -21,7 +21,6 @@ export default function GuestLayout({ errors }) {
           <div class="col-12 col-md-8 col-lg-6 col-xl-5">
             <div class="card bg-dark text-white" style={{borderRadius: "1rem"}}>
               <div class="card-body p-5 text-center">
-                <div class="mb-md-5 mt-md-4 pb-5">
                   {errors && (
                       <div className="alert alert-danger">
                         {Object.keys(errors).map((key) => (
@@ -30,7 +29,6 @@ export default function GuestLayout({ errors }) {
                       </div>
                     )}
                   <Outlet/>
-                </div>
               </div>
             </div>
           </div>

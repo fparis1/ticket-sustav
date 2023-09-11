@@ -8,7 +8,7 @@ export default function DefaultLayout() {
   const { user, token, setUser, setToken, notification } = useStateContext();
   const [navbarCollapsed, setNavbarCollapsed] = useState(false);
   const [linkDestination, setLinkDestination] = useState('');
-
+  debugger;
   const onLogout = (ev) => {
     ev.preventDefault();
 
@@ -81,13 +81,13 @@ export default function DefaultLayout() {
               <>Hello&nbsp;</>
               <b><i><xx-large>{user.name}</xx-large></i></b>&nbsp;&nbsp;
             </div>
-            <Button variant="outline-light" style={{ marginRight: "10px" }} onClick={onLogout}>
+            <Button variant="outline-light" className="client-style" onClick={onLogout}>
               Logout
             </Button>
           </div>
         </div>
       </Navbar>
-        <div className="container-xl" style={{justifyContent: "center", alignItems: "center"}}>
+        <div className="container-xl default-layout-style">
           <div className="row">
           <div class="col-12">
               <main>

@@ -30,61 +30,71 @@ export default function TicketForm() {
     setIsModalOpen(!isModalOpen);
   };
 
-  const fetchAllClients = () => {
-    const allClients = [];
-
-    const fetchClientsByPage = (page) => {
-      axiosClient
-        .get("/clients", {
+  const fetchAllClients = async () => {
+    try {
+      const initialResponse = await axiosClient.get("/clients", {
+        params: {
+          page: 1,
+        },
+      });
+  
+      const { data: initialData } = initialResponse;
+      const { data: initialClients, meta: initialMeta } = initialData;
+  
+      const totalPages = initialMeta.last_page;
+  
+      const allClients = [];
+  
+      for (let page = 1; page <= totalPages; page++) {
+        const response = await axiosClient.get("/clients", {
           params: {
             page,
           },
-        })
-        .then(({ data }) => {
-          const { data: clients, meta } = data;
-          allClients.push(...clients);
-
-          if (meta.current_page < meta.last_page) {
-            fetchClientsByPage(meta.current_page + 1);
-          } else {
-            setClients(allClients);
-          }
-        })
-        .catch((error) => {
-          console.error("Error fetching clients: ", error);
         });
-    };
-
-    fetchClientsByPage(1);
+  
+        const { data, meta } = response.data;
+        allClients.push(...data);
+      }
+  
+      setClients(allClients);
+    } catch (error) {
+      console.error("Error fetching clients: ", error);
+    }
   };
+  
 
-  const fetchAllTechnicians = () => {
-    const allTechnicians = [];
-
-    const fetchTechniciansByPage = (page) => {
-      axiosClient
-        .get("/technicians", {
+  const fetchAllTechnicians = async () => {
+    try {
+      const initialResponse = await axiosClient.get("/technicians", {
+        params: {
+          page: 1,
+        },
+      });
+  
+      const { data: initialData } = initialResponse;
+      const { data: initialTechnicians, meta: initialMeta } = initialData;
+  
+      const totalPages = initialMeta.last_page;
+  
+      const allTechnicians = [];
+  
+      for (let page = 1; page <= totalPages; page++) {
+        const response = await axiosClient.get("/technicians", {
           params: {
             page,
           },
-        })
-        .then(({ data }) => {
-          const { data: technicians, meta } = data;
-          allTechnicians.push(...technicians);
-
-          if (meta.current_page < meta.last_page) {
-            fetchTechniciansByPage(meta.current_page + 1);
-          } else {
-            setTechnicians(allTechnicians);
-          }
-        })
-        .catch((error) => {
-          console.error("Error fetching technicians: ", error);
         });
-    };
-
-    fetchTechniciansByPage(1);
+  
+        const { data, meta } = response.data;
+        allTechnicians.push(...data);
+      }
+  
+      setTechnicians(allTechnicians);
+    } catch (error) {
+      console.error("Error fetching technicians: ", error);
+    }
   };
+  
 
   if (id) {
     useEffect(() => {
@@ -271,6 +281,7 @@ export default function TicketForm() {
                       value={technicianOptions.filter((technician) =>
                         isTechnicianSelected(technician.value)
                       )}
+                      //extract id-s of newly chosen technicians
                       onChange={(selectedOptions) => {
                         const selectedTechnicians = selectedOptions.map((option) => option.value);
                         setTicket({ ...ticket, technician_id: selectedTechnicians });

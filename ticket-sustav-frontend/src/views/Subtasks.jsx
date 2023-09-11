@@ -43,8 +43,6 @@ export default function Comments() {
     setLoading(true);
     try {
 
-      //get all users so that they can be displayed in table
-
       const usersResponse = await axiosClient.get(`/users/`, { params: { page: 1, limit: 100 } });
       const allTechnicians = usersResponse.data.data;
   
@@ -64,7 +62,7 @@ export default function Comments() {
   
       const ticketResponse = await axiosClient.get(`/tickets/${ticketId}`);
       setTicket(ticketResponse.data);
-  
+
       let subtasksResponse;
       try {
         subtasksResponse = await axiosClient.get(`/subtasks/${ticketId}/`);
